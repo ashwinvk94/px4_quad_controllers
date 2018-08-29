@@ -50,7 +50,7 @@ class test:
         attitude_target_sub = rospy.Subscriber("/mavros/setpoint_raw/target_attitude", AttitudeTarget, self.attitude_target_sub_callback)
         '''
 
-        self.aruco_inverted_pose_pub = rospy.Publisher("/mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=10)
+        self.attitude_thrust_pub = rospy.Publisher("/mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=10)
         
         while not rospy.is_shutdown():
             att_r = rospy.get_param('/attitude_thrust_controller/att_r')
@@ -65,20 +65,19 @@ class test:
 
             print('\n')
 
-            att_quat = tf.transformations.quaternion_from_euler(att_r,att_p,att_y, axes='sxyz')
-
-            print(att_quat)
-
-            '''
+            att_quat_w,att_quat_x,att_quat_y,att_quat_z = tf.transformations.quaternion_from_euler(att_r,att_p,att_y, axes='sxyz')
+            
             target_attitude_thrust = AttitudeTarget()
-            AttitudeTarget.header.frame_id = "home"
-            AttitudeTarget.stamp = rospy.Time.now()
-            AttitudeTarget.type_mask = 7
-            AttitudeTarget.orientation.x = 
-            AttitudeTarget.orientation.y = 
-            AttitudeTarget.orientation.z = 
-            AttitudeTarget.orientation.w = 
-            '''
+            target_attitude_thrust.header.frame_id = "home"
+            target_attitude_thrust.header.stamp = rospy.Time.now()
+            target_attitude_thrust.type_mask = 7
+            target_attitude_thrust.orientation.x = att_quat_x
+            target_attitude_thrust.orientation.y = att_quat_y
+            target_attitude_thrust.orientation.z = att_quat_z
+            target_attitude_thrust.orientation.w = att_quat_w
+            target_attitude_thrust.thrust = 0
+
+            self.attitude_thrust_pub.publish(target_attitude_thrust)
 
 
             self.rate.sleep()
