@@ -49,18 +49,16 @@ class test:
             if(self.vicon_cb_flag==True and self.state_cb_flag==True):
                 #Update PID
                 self.P = rospy.get_param('/attitude_thrust_controller/height_hover_P')
-                if(self.current_state=='OFFBOARD'):
-                    self.I = rospy.get_param('/attitude_thrust_controller/height_hover_I')
-                else:
-                    self.I = 0
+                self.I = rospy.get_param('/attitude_thrust_controller/height_hover_I')
                 self.D = rospy.get_param('/attitude_thrust_controller/height_hover_D')
-                self.height_pid = PID.PID(self.P, self.I, self.D)
                 #Update setpoint
                 self.height_sp = rospy.get_param('/attitude_thrust_controller/height_sp')
                 self.height_pid.SetPoint = self.height_sp
 
-                self.height_pid.update(self.vicon_height)
-
+                if(self.current_state=='OFFBOARD'):
+                    self.height_pid.update(self.vicon_height)
+                else:
+                    self.height_pid.clear()
                 #For this to work, we have to align x,y of quad and vicon
                 thrust_output = self.height_pid.output
 
