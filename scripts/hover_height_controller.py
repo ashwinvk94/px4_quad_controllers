@@ -9,6 +9,7 @@ from mavros_msgs.srv import CommandBool, SetMode
 from std_msgs.msg import Bool,Float32
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
+from nav_msgs.msg import Odometry
 import tf.transformations
 import sys, time
 import PID
@@ -35,34 +36,34 @@ class test:
         #DECIDE ON PUBLISHING RATE
         self.rate = rospy.Rate(20.0) # MUST be more then 2Hz
         
-        self.height_target_pub = rospy.Publisher("/px4_quad_controllers/rpy_setpoint", PoseStamped, queue_size=10)
+        self.height_target_pub = rospy.Publisher("/px4_quad_controllers/thrust_setpoint", PoseStamped, queue_size=10)
 
         #ADD SUBSCRIBER FOR VICON DATA
-        #vicon_sub = rospy.Subscriber("/px4_quad_controllers/thrust_setpoint", Float32, self.vicon_sub_callback)
+        vicon_sub = rospy.Subscriber("/intel_aero_quad/odom", Odometry, self.vicon_sub_callback)
         
         while not rospy.is_shutdown():
-            # if(self.vicon_cb_flag==True):
-            self.height_sp = rospy.get_param('/attitude_thrust_controller/height_sp')
+            if(self.vicon_cb_flag==True):
+                self.height_sp = rospy.get_param('/attitude_thrust_controller/height_sp')
 
-            self.height_pid.SetPoint = self.height_sp
+                self.height_pid.SetPoint = self.height_sp
 
-            self.height_pid.update(self.vicon_height)
+                self.height_pid.update(self.vicon_height)
 
-            #For this to work, we have to align x,y of quad and vicon
-            height_output = self.height_pid.output
+                #For this to work, we have to align x,y of quad and vicon
+                thrust_output = self.height_pid.output
 
-            target_height = PoseStamped()
-            target_height.header.frame_id = "home"
-            target_height.header.stamp = rospy.Time.now()
-            target_height.position.x = height_output
+                target_thrust = PoseStamped()
+                target_thrust.header.frame_id = "home"
+                target_thrust.header.stamp = rospy.Time.now()
+                target_thrust.pose.position.x = thrust_output
 
-            self.height_target_pub.publish(target_height)
+                self.height_target_pub.publish(target_thrust)
 
             self.rate.sleep()
 
-    # def vicon_sub_callback(self,state):
-    #     self.vicon_height = state.z
-    #     self.vicon_cb_flag = True
+    def vicon_sub_callback(self,state):
+        self.vicon_height = state.pose.pose.position.z
+        self.vicon_cb_flag = True
 
 def main(args):
     rospy.init_node('offb_node', anonymous=True)
