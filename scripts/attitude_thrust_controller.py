@@ -40,7 +40,7 @@ class test:
                 self.att_r = rospy.get_param('/attitude_thrust_controller/att_r')
                 self.att_p = rospy.get_param('/attitude_thrust_controller/att_p')
                 self.att_y = rospy.get_param('/attitude_thrust_controller/att_y')
-                self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
+                #self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
                 
                 # print 'att_r'+str(att_r)
                 # print 'att_p'+str(att_p)
