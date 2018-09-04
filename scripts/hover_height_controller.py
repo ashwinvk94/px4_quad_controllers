@@ -54,14 +54,13 @@ class test:
                 #Update setpoint
                 self.height_sp = rospy.get_param('/attitude_thrust_controller/height_sp')
                 self.height_pid.SetPoint = self.height_sp
-
                 if(self.current_state=='OFFBOARD'):
                     self.height_pid.update(self.vicon_height)
                 else:
                     self.height_pid.clear()
+		
                 #For this to work, we have to align x,y of quad and vicon
                 thrust_output = self.height_pid.output
-
                 target_thrust = PoseStamped()
                 target_thrust.header.frame_id = "home"
                 target_thrust.header.stamp = rospy.Time.now()
@@ -77,7 +76,7 @@ class test:
 
     #Current state subscriber
     def state_subscriber_callback(self,state):
-        self.current_state = state
+        self.current_state = state.mode
         self.state_cb_flag = True
 
         self.rate.sleep()
