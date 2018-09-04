@@ -51,6 +51,9 @@ class test:
                 self.P = rospy.get_param('/attitude_thrust_controller/height_hover_P')
                 self.I = rospy.get_param('/attitude_thrust_controller/height_hover_I')
                 self.D = rospy.get_param('/attitude_thrust_controller/height_hover_D')
+                self.height_pid.setKp(self.P)
+                self.height_pid.setKi(self.I)
+                self.height_pid.setKd(self.D)
                 #Update setpoint
                 self.height_sp = rospy.get_param('/attitude_thrust_controller/height_sp')
                 self.height_pid.SetPoint = self.height_sp
