@@ -25,6 +25,7 @@ class test:
     def __init__(self):
 
         self.vicon_cb_flag = False
+        self.state_cb_flag = False
 
         self.P = rospy.get_param('/attitude_thrust_controller/height_hover_P')
         self.I = rospy.get_param('/attitude_thrust_controller/height_hover_I')
@@ -40,11 +41,22 @@ class test:
 
         #ADD SUBSCRIBER FOR VICON DATA
         vicon_sub = rospy.Subscriber("/intel_aero_quad/odom", Odometry, self.vicon_sub_callback)
+
+        state_sub = rospy.Subscriber("/mavros/state", State, self.state_subscriber_callback)
+
         
         while not rospy.is_shutdown():
-            if(self.vicon_cb_flag==True):
+            if(self.vicon_cb_flag==True and self.state_cb_flag==True):
+                #Update PID
+                self.P = rospy.get_param('/attitude_thrust_controller/height_hover_P')
+                if(self.current_state=='OFFBOARD'):
+                    self.I = rospy.get_param('/attitude_thrust_controller/height_hover_I')
+                else:
+                    self.I = 0
+                self.D = rospy.get_param('/attitude_thrust_controller/height_hover_D')
+                self.height_pid = PID.PID(self.P, self.I, self.D)
+                #Update setpoint
                 self.height_sp = rospy.get_param('/attitude_thrust_controller/height_sp')
-
                 self.height_pid.SetPoint = self.height_sp
 
                 self.height_pid.update(self.vicon_height)
@@ -65,6 +77,12 @@ class test:
         self.vicon_height = state.pose.pose.position.z
         self.vicon_cb_flag = True
 
+    #Current state subscriber
+    def state_subscriber_callback(self,state):
+        self.current_state = state
+        self.state_cb_flag = True
+
+        self.rate.sleep()
 def main(args):
     rospy.init_node('offb_node', anonymous=True)
     ic=test()
