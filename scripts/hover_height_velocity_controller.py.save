@@ -59,8 +59,10 @@ class test:
                 self.height_vel_pid.SetPoint = self.height_vel_sp
                 if(self.current_state=='OFFBOARD'):
                     self.height_vel_pid.update(self.vicon_vel)
+		    print('inside offboard')
                 else:
                     self.height_vel_pid.clear()
+		
                 #For this to work, we have to align x,y of quad and vicon
                 thrust_output = self.height_vel_pid.output
                 target_thrust = PoseStamped()

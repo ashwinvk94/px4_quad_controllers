@@ -17,7 +17,7 @@ height_hover_P: 1
 height_hover_I: 0
 height_hover_D: 0
 
-height_hover_P_vel: 1
-height_hover_I_vel: 0
-height_hover_D_vel: 0
+height_hover_vel_P: 1
+height_hover_vel_I: 0
+height_hover_vel_D: 0
 
