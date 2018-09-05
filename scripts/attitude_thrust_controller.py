@@ -35,32 +35,36 @@ class test:
         
         while not rospy.is_shutdown():
             # if(self.att_sp_cb_flag==True and self.thrust_sp_cb_flag==True):
-            if(self.thrust_sp_cb_flag==True):
-                #USE THE NEXT 4 LINES ONLY FOR INITIAL TESTING
-                self.att_r = rospy.get_param('/attitude_thrust_controller/att_r')
-                self.att_p = rospy.get_param('/attitude_thrust_controller/att_p')
-                self.att_y = rospy.get_param('/attitude_thrust_controller/att_y')
-                #self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
-                
-                # print 'att_r'+str(att_r)
-                # print 'att_p'+str(att_p)
-                # print 'att_y'+str(att_y)
-                # print 'thrust_sp'+str(thrust_sp)
-                # print('\n')
+            
+            
 
-                att_quat_w,att_quat_x,att_quat_y,att_quat_z = tf.transformations.quaternion_from_euler(self.att_r,self.att_p,self.att_y, axes='sxyz')
-                
-                target_attitude_thrust = AttitudeTarget()
-                target_attitude_thrust.header.frame_id = "home"
-                target_attitude_thrust.header.stamp = rospy.Time.now()
-                target_attitude_thrust.type_mask = 7
-                target_attitude_thrust.orientation.x = att_quat_x
-                target_attitude_thrust.orientation.y = att_quat_y
-                target_attitude_thrust.orientation.z = att_quat_z
-                target_attitude_thrust.orientation.w = att_quat_w
-                target_attitude_thrust.thrust = self.thrust_sp
+            if(self.thrust_sp_cb_flag==False):
+                self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
+            
+            #USE THE NEXT 4 LINES ONLY FOR INITIAL TESTING
+            self.att_r = rospy.get_param('/attitude_thrust_controller/att_r')
+            self.att_p = rospy.get_param('/attitude_thrust_controller/att_p')
+            self.att_y = rospy.get_param('/attitude_thrust_controller/att_y')
+            #self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
+            
+            # print 'att_r'+str(att_r)
+            # print 'att_p'+str(att_p)
+            # print 'att_y'+str(att_y)
+            # print 'thrust_sp'+str(thrust_sp)
+            # print('\n')
 
-                self.attitude_thrust_pub.publish(target_attitude_thrust)
+            att_quat_w,att_quat_x,att_quat_y,att_quat_z = tf.transformations.quaternion_from_euler(self.att_r,self.att_p,self.att_y, axes='sxyz')
+            
+            target_attitude_thrust = AttitudeTarget()
+            target_attitude_thrust.header.frame_id = "home"
+            target_attitude_thrust.header.stamp = rospy.Time.now()
+            target_attitude_thrust.type_mask = 7
+            target_attitude_thrust.orientation.x = att_quat_x
+            target_attitude_thrust.orientation.y = att_quat_y
+            target_attitude_thrust.orientation.z = att_quat_z
+            target_attitude_thrust.orientation.w = att_quat_w
+            target_attitude_thrust.thrust = self.thrust_sp
+            self.attitude_thrust_pub.publish(target_attitude_thrust)
 
             self.rate.sleep()
 
