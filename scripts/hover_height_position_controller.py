@@ -23,7 +23,6 @@ from pyquaternion import Quaternion
 import roslaunch
 class test:
     def __init__(self):
-	print('start')
         self.vicon_cb_flag = False
         self.state_cb_flag = False
 
@@ -46,7 +45,7 @@ class test:
 
         
         while not rospy.is_shutdown():
-	    print('inside')
+	    
             if(self.vicon_cb_flag==True and self.state_cb_flag==True):
                 #Update PID
                 self.P = rospy.get_param('/attitude_thrust_controller/height_hover_P')
@@ -60,6 +59,7 @@ class test:
                 self.height_pid.SetPoint = self.height_sp
                 if(self.current_state=='OFFBOARD'):
                     self.height_pid.update(self.vicon_height)
+		    print('inside')
                 else:
                     self.height_pid.clear()
 		
