@@ -59,7 +59,6 @@ class test:
                 self.height_pid.SetPoint = self.height_sp
                 if(self.current_state=='OFFBOARD'):
                     self.height_pid.update(self.vicon_height)
-		    print('inside')
                 else:
                     self.height_pid.clear()
 		
