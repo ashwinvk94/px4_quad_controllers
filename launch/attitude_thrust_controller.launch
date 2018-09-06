@@ -5,5 +5,5 @@
 	<rosparam file="$(find px4_quad_controllers)/param/params.yaml" />
 
 	</node>
-	<node pkg="px4_quad_controllers" name="hover_height_velocity_controller" type="hover_height_velocity_controller.py" output="screen"/>
+	<node pkg="px4_quad_controllers" name="hover_height_position_controller" type="hover_height_velocity_controller.py" output="screen"/>
 </launch>
