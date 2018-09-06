@@ -36,7 +36,7 @@ class test:
         #DECIDE ON PUBLISHING RATE
         self.rate = rospy.Rate(20.0) # MUST be more then 2Hz
         
-        self.height_target_pub = rospy.Publisher("/attitude_thrust_controller/thrust_sp", PoseStamped, queue_size=10)
+        self.height_target_pub = rospy.Publisher("/px4_quad_controllers/thrust_setpoint", PoseStamped, queue_size=10)
 
         #ADD SUBSCRIBER FOR VICON DATA
         vicon_sub = rospy.Subscriber("/intel_aero_quad/odom", Odometry, self.vicon_sub_callback)
@@ -64,7 +64,7 @@ class test:
                     self.height_pid.clear()
 		
                 #For this to work, we have to align x,y of quad and vicon
-                thrust_output = self.height_pid.output
+                thrust_output = self.height_pid.output+0.42
                 target_thrust = PoseStamped()
                 target_thrust.header.frame_id = "home"
                 target_thrust.header.stamp = rospy.Time.now()
