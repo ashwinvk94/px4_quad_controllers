@@ -50,8 +50,8 @@ class test:
                 self.att_y = rospy.get_param('/attitude_thrust_controller/att_y')
                 #self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
                 #Manual control
-                self.att_r = self.roll
-                self.att_p = -self.pitch
+                self.att_r = self.att_r
+                self.att_p = -self.rc_pitch
 
 
                 # print 'att_r'+str(att_r)
@@ -76,11 +76,10 @@ class test:
             self.rate.sleep()
 
     def attitude_setpoint_sub_callback(self,state):
-        print('REMOVE THIS PRINT!!')
-        # self.att_r = state.pose.position.x
-        # self.att_p = state.pose.position.y
-        # self.att_y = state.pose.position.z
-        # self.att_sp_cb_flag = True
+        self.att_r = state.pose.position.x
+       # self.att_p = state.pose.position.y
+        #self.att_y = state.pose.position.z
+        self.att_sp_cb_flag = True
 
 
     def thrust_setpoint_sub_callback(self,state):
@@ -89,8 +88,8 @@ class test:
 
     def rc_in_sub_callback(self,state):
         thrust_channels = state.channels
-        self.roll = (float(thrust_channels[0])-1500)/1000
-        self.pitch = (float(thrust_channels[1])-1500)/1000
+        self.rc_roll = (float(thrust_channels[0])-1500)/1000
+        self.rc_pitch = (float(thrust_channels[1])-1500)/1000
         self.rc_cb_flag = True
 
 def main(args):

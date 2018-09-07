@@ -1,23 +1,17 @@
 att_r: 0
 att_p: 0
 att_y: 0
-thrust_sp: 0.4
+thrust_sp: 0.45
 
 pos_x: 0
 pos_y: 0
 height_sp: 0.3
-height_vel_sp: 0.05
 yaw_sp: 0
 
-pos_hover_P: 0
-pos_hover_I: 0
-pos_hover_D: 0
+position_controller_P: 0
+position_controller_I: 0
+position_controller_D: 0
 
 height_hover_P: 0.2
 height_hover_I: 0.015
 height_hover_D: 0.06
-
-height_hover_vel_P: 1
-height_hover_vel_I: 0
-height_hover_vel_D: 0
-
