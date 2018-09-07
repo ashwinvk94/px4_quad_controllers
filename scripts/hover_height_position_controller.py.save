@@ -30,6 +30,7 @@ class test:
         self.I = rospy.get_param('/attitude_thrust_controller/height_hover_I')
         self.D = rospy.get_param('/attitude_thrust_controller/height_hover_D')
         self.height_pid = PID.PID(self.P, self.I, self.D)
+        self.height_pid.setSampleTime(0.01)
 
         #Rate init
         #DECIDE ON PUBLISHING RATE
@@ -58,12 +59,11 @@ class test:
                 self.height_pid.SetPoint = self.height_sp
                 if(self.current_state=='OFFBOARD'):
                     self.height_pid.update(self.vicon_height)
-                else:
+               
                     self.height_pid.clear()
 		
                 #For this to work, we have to align x,y of quad and vicon
-                
-		thrust_output = self.height_pid.output+0.5
+                thrust_output = self.height_pid.output+0.42
                 target_thrust = PoseStamped()
                 target_thrust.header.frame_id = "home"
                 target_thrust.header.stamp = rospy.Time.now()
