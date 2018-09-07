@@ -63,8 +63,8 @@ class test:
 					self.roll_pid.update(self.vicon_y_pos)
 				else:
 					self.roll_pid.clear()
-						
-				roll_output = self.roll_pid.output
+				
+				roll_output = -self.roll_pid.output
 				target_attitude = PoseStamped()
 				target_attitude.header.frame_id = "home"
 				target_attitude.header.stamp = rospy.Time.now()
@@ -75,7 +75,7 @@ class test:
 			self.rate.sleep()
 
 	def vicon_sub_callback(self,state):
-		self.vicon_y_pos = state.pose.pose.position.z
+		self.vicon_y_pos = state.pose.pose.position.y
 		self.vicon_cb_flag = True
 
 	#Current state subscriber

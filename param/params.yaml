@@ -3,12 +3,12 @@ att_p: 0
 att_y: 0
 thrust_sp: 0.45
 
-pos_x: 0
-pos_y: 0
-height_sp: 0.3
+pos_x_sp: 0
+pos_y_sp: 0
+height_sp: 0.5
 yaw_sp: 0
 
-position_controller_P: 0
+position_controller_P: 0.2
 position_controller_I: 0
 position_controller_D: 0
 

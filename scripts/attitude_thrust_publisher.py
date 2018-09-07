@@ -41,7 +41,7 @@ class test:
             # if(self.att_sp_cb_flag==True and self.thrust_sp_cb_flag==True):
             
             
-            if(self.rc_cb_flag == True):
+            if(self.rc_cb_flag == True and self.att_sp_cb_flag==True):
                 if(self.thrust_sp_cb_flag==False):
                     self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
                 #USE THE NEXT 4 LINES ONLY FOR INITIAL TESTING
