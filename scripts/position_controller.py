@@ -30,6 +30,7 @@ class test:
 		self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
 		self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
 		self.roll_pid = PID.PID(self.P, self.I, self.D)
+		self.pitch_pid = PID.PID(self.P, self.I, self.D)
 
 		#X axis of the vicon system should alwasy be aligned with the front of the quad
 
@@ -55,26 +56,36 @@ class test:
 				self.roll_pid.setKp(self.P)
 				self.roll_pid.setKi(self.I)
 				self.roll_pid.setKd(self.D)
+				self.pitch_pid.setKp(self.P)
+				self.pitch_pid.setKi(self.I)
+				self.pitch_pid.setKd(self.D)
 				
 				#Update setpoint
 				self.pos_y_sp = rospy.get_param('/attitude_thrust_publisher/pos_y_sp')
+				self.pos_x_sp = rospy.get_param('/attitude_thrust_publisher/pos_x_sp')
 				self.roll_pid.SetPoint = self.pos_y_sp
+				self.pitch_pid.SetPoint = self.pos_x_sp
 				if(self.current_state=='OFFBOARD'):
 					self.roll_pid.update(self.vicon_y_pos)
+					self.pitch_pid.update(self.vicon_x_pos)
 				else:
 					self.roll_pid.clear()
+					self.pitch_pid.clear()
 				
 				roll_output = -self.roll_pid.output
+				pitch_output = self.pitch_pid.output
 				target_attitude = PoseStamped()
 				target_attitude.header.frame_id = "home"
 				target_attitude.header.stamp = rospy.Time.now()
 				target_attitude.pose.position.x = roll_output
+				target_attitude.pose.position.y = pitch_output
 
 				self.attitude_target_pub.publish(target_attitude)
 
 			self.rate.sleep()
 
 	def vicon_sub_callback(self,state):
+		self.vicon_x_pos = state.pose.pose.position.x
 		self.vicon_y_pos = state.pose.pose.position.y
 		self.vicon_cb_flag = True
 

@@ -50,8 +50,8 @@ class test:
                 self.att_y = rospy.get_param('/attitude_thrust_controller/att_y')
                 #self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
                 #Manual control
-                self.att_r = self.att_r
-                self.att_p = -self.rc_pitch
+                #self.att_r = self.rc_roll
+                #self.att_p = -self.rc_pitch
 
 
                 # print 'att_r'+str(att_r)
@@ -77,7 +77,7 @@ class test:
 
     def attitude_setpoint_sub_callback(self,state):
         self.att_r = state.pose.position.x
-       # self.att_p = state.pose.position.y
+        self.att_p = state.pose.position.y
         #self.att_y = state.pose.position.z
         self.att_sp_cb_flag = True
 

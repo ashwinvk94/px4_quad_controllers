@@ -8,9 +8,9 @@ pos_y_sp: 0
 height_sp: 0.5
 yaw_sp: 0
 
-position_controller_P: 0.2
+position_controller_P: 0.3
 position_controller_I: 0
-position_controller_D: 0
+position_controller_D: 0.05
 
 height_hover_P: 0.2
 height_hover_I: 0.015
