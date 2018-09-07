@@ -26,9 +26,9 @@ class test:
 		self.vicon_cb_flag = False
 		self.state_cb_flag = False
 
-		self.P = rospy.get_param('/attitude_thrust_controller/position_controller_P')
-		self.I = rospy.get_param('/attitude_thrust_controller/position_controller_I')
-		self.D = rospy.get_param('/attitude_thrust_controller/position_controller_D')
+		self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
+		self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
+		self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
 		self.roll_pid = PID.PID(self.P, self.I, self.D)
 
 		#X axis of the vicon system should alwasy be aligned with the front of the quad
@@ -49,15 +49,15 @@ class test:
 		
 			if(self.vicon_cb_flag==True and self.state_cb_flag==True):
 				#Update PID
-				self.P = rospy.get_param('/attitude_thrust_controller/position_controller_P')
-				self.I = rospy.get_param('/attitude_thrust_controller/position_controller_I')
-				self.D = rospy.get_param('/attitude_thrust_controller/position_controller_D')
+				self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
+				self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
+				self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
 				self.roll_pid.setKp(self.P)
 				self.roll_pid.setKi(self.I)
 				self.roll_pid.setKd(self.D)
 				
 				#Update setpoint
-				self.pos_y_sp = rospy.get_param('/attitude_thrust_controller/pos_y_sp')
+				self.pos_y_sp = rospy.get_param('/attitude_thrust_publisher/pos_y_sp')
 				self.roll_pid.SetPoint = self.pos_y_sp
 				if(self.current_state=='OFFBOARD'):
 					self.roll_pid.update(self.vicon_y_pos)
