@@ -73,7 +73,7 @@ class test:
 					self.pitch_pid.clear()
 				
 				roll_output = -self.roll_pid.output
-				pitch_output = self.pitch_pid.output
+				pitch_output = -self.pitch_pid.output
 				target_attitude = PoseStamped()
 				target_attitude.header.frame_id = "home"
 				target_attitude.header.stamp = rospy.Time.now()
