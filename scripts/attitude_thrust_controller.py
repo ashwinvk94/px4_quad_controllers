@@ -50,10 +50,8 @@ class test:
                 self.att_y = rospy.get_param('/attitude_thrust_controller/att_y')
                 #self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
                 #Manual control
-                self.att_r = self.roll/2
-                self.att_p = -self.pitch/2
-                print(self.att_r)
-                print(self.att_p)
+                self.att_r = self.roll
+                self.att_p = -self.pitch
 
 
                 # print 'att_r'+str(att_r)
@@ -62,7 +60,7 @@ class test:
                 # print 'thrust_sp'+str(thrust_sp)
                 # print('\n')
 
-                att_quat_w,att_quat_x,att_quat_y,att_quat_z = tf.transformations.quaternion_from_euler(self.att_r,self.att_p,self.att_y, axes='sxyz')
+                att_quat_w,att_quat_x,att_quat_y,att_quat_z = tf.transformations.quaternion_from_euler(self.att_y,self.att_p,self.att_r, axes='sxyz')
                 
                 target_attitude_thrust = AttitudeTarget()
                 target_attitude_thrust.header.frame_id = "home"
