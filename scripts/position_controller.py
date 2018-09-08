@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import numpy
 import rospy
+import math
 import mavros
 from geometry_msgs.msg import PoseStamped,Vector3
 from mavros_msgs.msg import State,AttitudeTarget
@@ -29,8 +30,8 @@ class test:
 		self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
 		self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
 		self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
-		self.roll_pid = PID.PID(self.P, self.I, self.D)
-		self.pitch_pid = PID.PID(self.P, self.I, self.D)
+		self.vicon_y_pid = PID.PID(self.P, self.I, self.D)
+		self.vicon_x_pid = PID.PID(self.P, self.I, self.D)
 
 		#X axis of the vicon system should alwasy be aligned with the front of the quad
 
@@ -45,7 +46,8 @@ class test:
 
 		state_sub = rospy.Subscriber("/mavros/state", State, self.state_subscriber_callback)
 
-		
+		self.traj_yaw_pub = rospy.Publisher("/px4_quad_controllers/traj_yaw", PoseStamped, queue_size=10)
+
 		while not rospy.is_shutdown():
 		
 			if(self.vicon_cb_flag==True and self.state_cb_flag==True):
@@ -53,40 +55,56 @@ class test:
 				self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
 				self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
 				self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
-				self.roll_pid.setKp(self.P)
-				self.roll_pid.setKi(self.I)
-				self.roll_pid.setKd(self.D)
-				self.pitch_pid.setKp(self.P)
-				self.pitch_pid.setKi(self.I)
-				self.pitch_pid.setKd(self.D)
+				self.vicon_y_pid.setKp(self.P)
+				self.vicon_y_pid.setKi(self.I)
+				self.vicon_y_pid.setKd(self.D)
+				self.vicon_x_pid.setKp(self.P)
+				self.vicon_x_pid.setKi(self.I)
+				self.vicon_x_pid.setKd(self.D)
 				
 				#Update setpoint
 				self.pos_y_sp = rospy.get_param('/attitude_thrust_publisher/pos_y_sp')
 				self.pos_x_sp = rospy.get_param('/attitude_thrust_publisher/pos_x_sp')
-				self.roll_pid.SetPoint = self.pos_y_sp
-				self.pitch_pid.SetPoint = self.pos_x_sp
+				self.vicon_y_pid.SetPoint = self.pos_y_sp
+				self.vicon_x_pid.SetPoint = self.pos_x_sp
 				if(self.current_state=='OFFBOARD'):
-					self.roll_pid.update(self.vicon_y_pos)
-					self.pitch_pid.update(self.vicon_x_pos)
+					self.vicon_y_pid.update(self.vicon_y_pos)
+					self.vicon_x_pid.update(self.vicon_x_pos)
 				else:
-					self.roll_pid.clear()
-					self.pitch_pid.clear()
+					self.vicon_y_pid.clear()
+					self.vicon_x_pid.clear()
 				
-				roll_output = -self.roll_pid.output
-				pitch_output = -self.pitch_pid.output
+				vincon_y_output = -self.vicon_y_pid.output
+				vicon_x_output = -self.vicon_x_pid.output
 				target_attitude = PoseStamped()
 				target_attitude.header.frame_id = "home"
 				target_attitude.header.stamp = rospy.Time.now()
-				target_attitude.pose.position.x = roll_output
-				target_attitude.pose.position.y = pitch_output
+				target_attitude.pose.position.x = -vincon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
+				target_attitude.pose.position.y = -vincon_y_output * math.sin(self.yaw_change) +  vicon_x_output math.* cos(self.yaw_change) #pitch
+
+				target_traj_yaw_sp = PoseStamped()
+				target_traj_yaw_sp.header.frame_id = "home"
+				target_traj_yaw_sp.header.stamp = rospy.Time.now()
+				self.traj_yaw_sp = rospy.get_param('/attitude_thrust_publisher/traj_yaw_sp')
+
+				target_traj_yaw_sp.pose.position.x = self.traj_yaw_sp
 
 				self.attitude_target_pub.publish(target_attitude)
+				self.traj_yaw_pub.publish(target_attitude)
 
 			self.rate.sleep()
 
 	def vicon_sub_callback(self,state):
 		self.vicon_x_pos = state.pose.pose.position.x
 		self.vicon_y_pos = state.pose.pose.position.y
+		orientation = (state.pose.pose.orientation)
+        #self.ground_wrt_body_quat = Quaternion(orientation.w,orientation.x,orientation.y,orientation.z)
+        #quat = state.orientation
+        #https://www.lfd.uci.edu/~gohlke/code/transformations.py.html
+        euler = tf.transformations.euler_from_quaternion([orientation.w, orientation.x, orientation.y, orientation.z])
+        self.current_yaw_vicon = euler[0]
+        self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
+        self.yaw_change = self.vicon_yaw_sp - self.current_yaw_vicon
 		self.vicon_cb_flag = True
 
 	#Current state subscriber

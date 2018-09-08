@@ -17,3 +17,5 @@ height_hover_I: 0.015
 height_hover_D: 0.06
 
 vicon_yaw_sp: 1.5708
+
+traj_yaw_sp: 0

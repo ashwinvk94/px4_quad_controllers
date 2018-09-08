@@ -43,12 +43,14 @@ class test:
         
         #Quadcopter imu subscriber init
         attitude_target_sub = rospy.Subscriber("/mavros/imu/data", Imu, self.attitude_target_sub_callback)
+        traj_yaw_sub = rospy.Subscriber("/px4_quad_controllers/traj_yaw", PoseStamped, self.traj_yaw_sub_sub_callback)
 
         self.yaw_target_pub = rospy.Publisher("/px4_quad_controllers/yaw_setpoint", PoseStamped, queue_size=10)
 
 
         while not rospy.is_shutdown():
-            if(self.vicon_cb_flag == True and self.imu_cb_flag == True):
+            if(self.vicon_cb_flag == True and self.imu_cb_flag == True and self.traj_cb_flag == True):
+
                 self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
 
                 self.yaw_sp = self.vicon_yaw_sp - self.current_yaw_vicon
@@ -56,7 +58,7 @@ class test:
                 target_yaw = PoseStamped()
                 target_yaw.header.frame_id = "home"
                 target_yaw.header.stamp = rospy.Time.now()
-                target_yaw.pose.position.x = self.yaw_sp - self.current_yaw_imu
+                target_yaw.pose.position.x = self.yaw_sp - self.current_yaw_imu + self.traj_yaw_sp
 
                 self.yaw_target_pub.publish(target_yaw)
 
@@ -67,40 +69,27 @@ class test:
 
                 # print('final setpoint yaw = '+ str(target_yaw.pose.position.x))
 
-                print('\n')
+                # print('\n')
             self.rate.sleep()
 
         
     def vicon_attitude_sub_callback(self,state):
         orientation = (state.pose.pose.orientation)
-        
         #self.ground_wrt_body_quat = Quaternion(orientation.w,orientation.x,orientation.y,orientation.z)
         #quat = state.orientation
         #https://www.lfd.uci.edu/~gohlke/code/transformations.py.html
-
         euler = tf.transformations.euler_from_quaternion([orientation.w, orientation.x, orientation.y, orientation.z])
-        
-
         self.current_yaw_vicon = euler[0]
-
         self.vicon_cb_flag = True
 
-        '''
-        self.body_wrt_ground_trans = self.body_wrt_ground_quat.transformation_matrix
-        self.ground_wrt_body_trans =numpy.linalg.inv(self.body_wrt_ground_trans)
-        print(self.ground_wrt_body_trans)
-        '''
-        #self.rate.sleep()
+
+    def traj_yaw_sub_sub_callback(self,state):
+        self.traj_yaw_sp = state.pose.pose.position.x
+        self.traj_cb_flag = True
 
     def attitude_target_sub_callback(self,state):
         orientation = (state.orientation)
-        
-        #self.ground_wrt_body_quat = Quaternion(orientation.w,orientation.x,orientation.y,orientation.z)
-        #quat = state.orientation
-        #https://www.lfd.uci.edu/~gohlke/code/transformations.py.html
         euler = tf.transformations.euler_from_quaternion([orientation.w, orientation.x, orientation.y, orientation.z])
-        
-
         self.current_yaw_imu = euler[0]
         self.imu_cb_flag = True
 
