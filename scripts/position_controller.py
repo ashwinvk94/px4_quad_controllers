@@ -98,13 +98,13 @@ class test:
 		self.vicon_x_pos = state.pose.pose.position.x
 		self.vicon_y_pos = state.pose.pose.position.y
 		orientation = (state.pose.pose.orientation)
-        #self.ground_wrt_body_quat = Quaternion(orientation.w,orientation.x,orientation.y,orientation.z)
-        #quat = state.orientation
-        #https://www.lfd.uci.edu/~gohlke/code/transformations.py.html
-        euler = tf.transformations.euler_from_quaternion([orientation.w, orientation.x, orientation.y, orientation.z])
-        self.current_yaw_vicon = euler[0]
-        self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
-        self.yaw_change = self.vicon_yaw_sp - self.current_yaw_vicon
+		#self.ground_wrt_body_quat = Quaternion(orientation.w,orientation.x,orientation.y,orientation.z)
+		#quat = state.orientation
+		#https://www.lfd.uci.edu/~gohlke/code/transformations.py.html
+		euler = tf.transformations.euler_from_quaternion([orientation.w, orientation.x, orientation.y, orientation.z])
+		self.current_yaw_vicon = euler[0]
+		self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
+		self.yaw_change = self.vicon_yaw_sp - self.current_yaw_vicon
 		self.vicon_cb_flag = True
 
 	#Current state subscriber
