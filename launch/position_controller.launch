@@ -5,4 +5,5 @@
 
 	<node pkg="px4_quad_controllers" name="height_controller" type="height_controller.py" output="screen"/>
 	<node pkg="px4_quad_controllers" name="position_controller" type="position_controller.py" output="screen"/>
+	<node pkg="px4_quad_controllers" name="yaw_sp_publisher" type="yaw_sp_publisher.py" output="screen"/>
 </launch>
