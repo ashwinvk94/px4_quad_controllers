@@ -43,12 +43,12 @@ class test:
             
             if(self.rc_cb_flag == True and self.att_sp_cb_flag==True):
                 if(self.thrust_sp_cb_flag==False):
-                    self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
+                    self.thrust_sp = rospy.get_param('/attitude_thrust_publisher/thrust_sp')
                 #USE THE NEXT 4 LINES ONLY FOR INITIAL TESTING
-                #self.att_r = rospy.get_param('/attitude_thrust_controller/att_r')
-                #self.att_p = rospy.get_param('/attitude_thrust_controller/att_p')
-                self.att_y = rospy.get_param('/attitude_thrust_controller/att_y')
-                #self.thrust_sp = rospy.get_param('/attitude_thrust_controller/thrust_sp')
+                #self.att_r = rospy.get_param('/attitude_thrust_publisher/att_r')
+                #self.att_p = rospy.get_param('/attitude_thrust_publisher/att_p')
+                self.att_y = rospy.get_param('/attitude_thrust_publisher/att_y')
+                #self.thrust_sp = rospy.get_param('/attitude_thrust_publisher/thrust_sp')
                 #Manual control
                 #self.att_r = self.rc_roll
                 #self.att_p = -self.rc_pitch
