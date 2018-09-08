@@ -74,13 +74,16 @@ class test:
 					self.vicon_y_pid.clear()
 					self.vicon_x_pid.clear()
 				
-				vincon_y_output = -self.vicon_y_pid.output
+				vicon_y_output = self.vicon_y_pid.output
 				vicon_x_output = -self.vicon_x_pid.output
+				print(vicon_y_output)
+				print(vicon_x_output)
 				target_attitude = PoseStamped()
 				target_attitude.header.frame_id = "home"
 				target_attitude.header.stamp = rospy.Time.now()
-				target_attitude.pose.position.x = -vincon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
-				target_attitude.pose.position.y = -vincon_y_output * math.sin(self.yaw_change) +  vicon_x_output * math.cos(self.yaw_change) #pitch
+				target_attitude.pose.position.x = -vicon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
+				target_attitude.pose.position.y = -vicon_y_output * math.sin(self.yaw_change) +  vicon_x_output * math.cos(self.yaw_change) #pitch
+				print(target_attitude)
 
 				target_traj_yaw_sp = PoseStamped()
 				target_traj_yaw_sp.header.frame_id = "home"
