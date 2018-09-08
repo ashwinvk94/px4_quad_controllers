@@ -24,6 +24,7 @@ class test:
     def __init__(self):
         self.imu_cb_flag = False
         self.vicon_cb_flag = False
+        self.traj_cb_flag = False
 
         self.local_pose_subscriber_prev=0
         startup_start = timeit.default_timer()

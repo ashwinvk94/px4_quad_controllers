@@ -80,7 +80,7 @@ class test:
 				target_attitude.header.frame_id = "home"
 				target_attitude.header.stamp = rospy.Time.now()
 				target_attitude.pose.position.x = -vincon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
-				target_attitude.pose.position.y = -vincon_y_output * math.sin(self.yaw_change) +  vicon_x_output math.* cos(self.yaw_change) #pitch
+				target_attitude.pose.position.y = -vincon_y_output * math.sin(self.yaw_change) +  vicon_x_output * math.cos(self.yaw_change) #pitch
 
 				target_traj_yaw_sp = PoseStamped()
 				target_traj_yaw_sp.header.frame_id = "home"
