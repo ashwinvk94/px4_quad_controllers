@@ -44,7 +44,7 @@ class test:
         #Quadcopter imu subscriber init
         attitude_target_sub = rospy.Subscriber("/mavros/imu/data", Imu, self.attitude_target_sub_callback)
 
-        self.yaw_target_pub = rospy.Publisher("/px4_quad_controllers/thrust_setpoint", PoseStamped, queue_size=10)
+        self.yaw_target_pub = rospy.Publisher("/px4_quad_controllers/yaw_setpoint", PoseStamped, queue_size=10)
 
 
         while not rospy.is_shutdown():
@@ -60,12 +60,12 @@ class test:
 
                 self.yaw_target_pub.publish(target_yaw)
 
-                print('VICON setpoint yaw = '+ str(self.vicon_yaw_sp))
-                print('VICON current yaw = '+ str(self.current_yaw_vicon))
+                # print('VICON setpoint yaw = '+ str(self.vicon_yaw_sp))
+                # print('VICON current yaw = '+ str(self.current_yaw_vicon))
 
-                print('quad CURRENT yaw = '+ str(self.imu_cb_flag))
+                # print('quad CURRENT yaw = '+ str(self.current_yaw_imu))
 
-                print('final setpoint yaw = '+ str(target_yaw.pose.position.x))
+                # print('final setpoint yaw = '+ str(target_yaw.pose.position.x))
 
                 print('\n')
             self.rate.sleep()

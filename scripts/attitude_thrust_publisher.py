@@ -25,7 +25,7 @@ class test:
         self.att_sp_cb_flag = False
         self.thrust_sp_cb_flag = False
         self.rc_cb_flag = False
-
+        self.yaw_sp_cb_flag = False
 
         #Rate init
         #DECIDE ON PUBLISHING RATE
@@ -34,6 +34,7 @@ class test:
         self.attitude_thrust_pub = rospy.Publisher("/mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=10)
         attitude_target_sub = rospy.Subscriber("/px4_quad_controllers/rpy_setpoint", PoseStamped, self.attitude_setpoint_sub_callback)
         thrust_target_sub = rospy.Subscriber("/px4_quad_controllers/thrust_setpoint", PoseStamped, self.thrust_setpoint_sub_callback)
+        yaw_target_sub = rospy.Subscriber("/px4_quad_controllers/yaw_setpoint", PoseStamped, self.yaw_setpoint_sub_callback)
         #Manual control sub
         thrust_target_sub = rospy.Subscriber("/mavros/rc/in", RCIn, self.rc_in_sub_callback)
         
@@ -41,7 +42,7 @@ class test:
             # if(self.att_sp_cb_flag==True and self.thrust_sp_cb_flag==True):
             
             
-            if(self.rc_cb_flag == True and self.att_sp_cb_flag==True):
+            if(self.rc_cb_flag == True and self.att_sp_cb_flag==True and self.yaw_sp_cb_flag==True):
                 if(self.thrust_sp_cb_flag==False):
                     self.thrust_sp = rospy.get_param('/attitude_thrust_publisher/thrust_sp')
                 #USE THE NEXT 4 LINES ONLY FOR INITIAL TESTING
@@ -80,6 +81,11 @@ class test:
         self.att_p = state.pose.position.y
         #self.att_y = state.pose.position.z
         self.att_sp_cb_flag = True
+
+    def yaw_setpoint_sub_callback(self,state):
+        self.att_y = state.pose.position.x
+        #self.att_y = state.pose.position.z
+        self.yaw_sp_cb_flag = True
 
 
     def thrust_setpoint_sub_callback(self,state):
