@@ -15,3 +15,5 @@ position_controller_D: 0.07
 height_hover_P: 0.2
 height_hover_I: 0.015
 height_hover_D: 0.06
+
+vicon_yaw_sp: 1.5708
