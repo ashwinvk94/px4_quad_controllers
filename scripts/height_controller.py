@@ -58,8 +58,8 @@ class test:
 				self.height_sp = rospy.get_param('/attitude_thrust_publisher/height_sp')
 				self.height_pid.SetPoint = self.height_sp
 				
-				self.height_pid.update(self.vicon_height)
-				else:
+				if(self.current_state=='OFFBOARD'):
+					self.height_pid.update(self.vicon_height)
 					
 		
 				#For this to work, we have to align x,y of quad and vicon
