@@ -72,9 +72,9 @@ class test:
 				#Thrust threshold
 				if(thrust_output<=self.max_thrust and thrust_output>=self.min_thrust):
 					target_thrust.pose.position.x = thrust_output
-				elif(thrust_output>self.max_thrust)
+				elif(thrust_output>self.max_thrust):
 					target_thrust.pose.position.x = self.max_thrust
-				elif(thrust_output<self.min_thrust)
+				elif(thrust_output<self.min_thrust):
 					target_thrust.pose.position.x = self.min_thrust
 				else:
 					print("HEIGHT CONTROLLER ERROR!")
