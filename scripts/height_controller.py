@@ -25,7 +25,7 @@ class test:
 	def __init__(self):
 		self.vicon_cb_flag = False
 		self.state_cb_flag = False
-
+		self.state_pid_reset_flag=False
 		self.pid_reset_flag=False
 
 		self.P = rospy.get_param('/attitude_thrust_publisher/height_hover_P')
@@ -67,6 +67,7 @@ class test:
 					self.height_pid.update(self.vicon_height)
 				else:
 					self.pid_reset_flag=False
+					self.state_pid_reset_flag=False
 				#For this to work, we have to align x,y of quad and vicon
 				
 				thrust_output = self.height_pid.output+0.5
@@ -96,6 +97,9 @@ class test:
 	def state_subscriber_callback(self,state):
 		self.current_state = state.mode
 		self.state_cb_flag = True
+		if(self.current_state!='OFFBOARD' and self.state_pid_reset_flag==False):
+			self.height_pid.clear()
+			self.state_pid_reset_flag=True
 
 		self.rate.sleep()
 def main(args):
