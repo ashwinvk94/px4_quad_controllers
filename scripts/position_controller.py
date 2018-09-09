@@ -26,6 +26,7 @@ class test:
 	def __init__(self):
 		self.vicon_cb_flag = False
 		self.state_cb_flag = False
+		self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
 
 		self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
 		self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
@@ -76,14 +77,11 @@ class test:
 				
 				vicon_y_output = self.vicon_y_pid.output
 				vicon_x_output = -self.vicon_x_pid.output
-				print(vicon_y_output)
-				print(vicon_x_output)
 				target_attitude = PoseStamped()
 				target_attitude.header.frame_id = "home"
 				target_attitude.header.stamp = rospy.Time.now()
 				target_attitude.pose.position.x = -vicon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
 				target_attitude.pose.position.y = -vicon_y_output * math.sin(self.yaw_change) +  vicon_x_output * math.cos(self.yaw_change) #pitch
-				print(target_attitude)
 
 				target_traj_yaw_sp = PoseStamped()
 				target_traj_yaw_sp.header.frame_id = "home"
@@ -93,7 +91,7 @@ class test:
 				target_traj_yaw_sp.pose.position.x = self.traj_yaw_sp
 
 				self.attitude_target_pub.publish(target_attitude)
-				self.traj_yaw_pub.publish(target_attitude)
+				self.traj_yaw_pub.publish(target_traj_yaw_sp)
 
 			self.rate.sleep()
 
@@ -106,8 +104,7 @@ class test:
 		#https://www.lfd.uci.edu/~gohlke/code/transformations.py.html
 		euler = tf.transformations.euler_from_quaternion([orientation.w, orientation.x, orientation.y, orientation.z])
 		self.current_yaw_vicon = euler[0]
-		self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
-		self.yaw_change = self.vicon_yaw_sp - self.current_yaw_vicon
+		self.yaw_change = self.yaw_change = self.vicon_yaw_sp - self.current_yaw_vicon
 		self.vicon_cb_flag = True
 
 	#Current state subscriber

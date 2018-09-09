@@ -31,7 +31,7 @@ class test:
 		print('start')
 
 		#Rate init
-		self.rate = rospy.Rate(5.0) # MUST be more then 2Hz
+		self.rate = rospy.Rate(1.0)
 
 		self.current_state = State()
 
@@ -54,23 +54,23 @@ class test:
 
 				self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
 
-				self.yaw_sp = self.vicon_yaw_sp - self.current_yaw_vicon
+				self.yaw_sp = self.current_yaw_vicon - (self.vicon_yaw_sp+self.traj_yaw_sp)
 
 				target_yaw = PoseStamped()
 				target_yaw.header.frame_id = "home"
 				target_yaw.header.stamp = rospy.Time.now()
-				target_yaw.pose.position.x = self.yaw_sp - self.current_yaw_imu + self.traj_yaw_sp
+				target_yaw.pose.position.x = self.current_yaw_imu - self.yaw_sp
 
 				self.yaw_target_pub.publish(target_yaw)
 
-				# print('VICON setpoint yaw = '+ str(self.vicon_yaw_sp))
-				# print('VICON current yaw = '+ str(self.current_yaw_vicon))
+				#print('VICON setpoint yaw = '+ str(self.vicon_yaw_sp))
+				#print('VICON current yaw = '+ str(self.current_yaw_vicon))
 
-				# print('quad CURRENT yaw = '+ str(self.current_yaw_imu))
+				#print('quad CURRENT yaw = '+ str(self.current_yaw_imu))
 
-				# print('final setpoint yaw = '+ str(target_yaw.pose.position.x))
+				#print('final setpoint yaw = '+ str(target_yaw.pose.position.x))
 
-				# print('\n')
+				#print('\n')
 			self.rate.sleep()
 
 		
@@ -85,7 +85,7 @@ class test:
 
 
 	def traj_yaw_sub_sub_callback(self,state):
-		self.traj_yaw_sp = state.pose.pose.position.x
+		self.traj_yaw_sp = state.pose.position.x
 		self.traj_cb_flag = True
 
 	def attitude_target_sub_callback(self,state):

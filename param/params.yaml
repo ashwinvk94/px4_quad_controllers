@@ -5,12 +5,12 @@ thrust_sp: 0.45
 
 pos_x_sp: 0
 pos_y_sp: 0
-height_sp: 0.5
+height_sp: 0.8
 yaw_sp: 0
 
-position_controller_P: 0.25
+position_controller_P: 0.5
 position_controller_I: 0
-position_controller_D: 0.07
+position_controller_D: 0.12
 
 height_hover_P: 0.2
 height_hover_I: 0.015
