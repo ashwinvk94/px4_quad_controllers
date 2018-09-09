@@ -29,6 +29,8 @@ class test:
         self.P = rospy.get_param('/attitude_thrust_publisher/height_hover_P')
         self.I = rospy.get_param('/attitude_thrust_publisher/height_hover_I')
         self.D = rospy.get_param('/attitude_thrust_publisher/height_hover_D')
+        self.min_thrust = rospy.get_param('/attitude_thrust_publisher/min_thrust')
+        self.max_thrust = rospy.get_param('/attitude_thrust_publisher/max_thrust')
         self.height_pid = PID.PID(self.P, self.I, self.D)
 
         #Rate init
@@ -42,7 +44,6 @@ class test:
 
         state_sub = rospy.Subscriber("/mavros/state", State, self.state_subscriber_callback)
 
-        
         while not rospy.is_shutdown():
 	    
             if(self.vicon_cb_flag==True and self.state_cb_flag==True):
@@ -63,11 +64,19 @@ class test:
 		
                 #For this to work, we have to align x,y of quad and vicon
                 
-		thrust_output = self.height_pid.output+0.5
+				thrust_output = self.height_pid.output+0.5
                 target_thrust = PoseStamped()
                 target_thrust.header.frame_id = "home"
                 target_thrust.header.stamp = rospy.Time.now()
-                target_thrust.pose.position.x = thrust_output
+
+                #Thrust threshold
+                if(thrust_output<=self.max_thrust and thrust_output>=self.min_thrust):
+                	target_thrust.pose.position.x = thrust_output
+                elif(thrust_output>self.max_thrust)
+                	target_thrust.pose.position.x = self.max_thrust
+                elif(thrust_output<self.min_thrust)
+                	target_thrust.pose.position.x = self.min_thrust
+                
 
                 self.height_target_pub.publish(target_thrust)
 

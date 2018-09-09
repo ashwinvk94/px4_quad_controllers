@@ -5,7 +5,7 @@ thrust_sp: 0.45
 
 pos_x_sp: 0
 pos_y_sp: 0
-height_sp: 0.8
+
 yaw_sp: 0
 
 position_controller_P: 0.5
@@ -18,4 +18,8 @@ height_hover_D: 0.06
 
 vicon_yaw_sp: 1.5708
 
+height_sp: 0.8
 traj_yaw_sp: 0
+
+min_thrust: 0.35
+max_thrust: 0.8
