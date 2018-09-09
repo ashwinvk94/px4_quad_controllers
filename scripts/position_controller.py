@@ -29,7 +29,7 @@ class test:
 		self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
 
 		self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
-		self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
+		self.I = 0
 		self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
 		self.vicon_y_pid = PID.PID(self.P, self.I, self.D)
 		self.vicon_x_pid = PID.PID(self.P, self.I, self.D)
@@ -52,28 +52,15 @@ class test:
 		while not rospy.is_shutdown():
 		
 			if(self.vicon_cb_flag==True and self.state_cb_flag==True):
-				#Update PID
-				self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
-				self.I = rospy.get_param('/attitude_thrust_publisher/position_controller_I')
-				self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
-				self.vicon_y_pid.setKp(self.P)
-				self.vicon_y_pid.setKi(self.I)
-				self.vicon_y_pid.setKd(self.D)
-				self.vicon_x_pid.setKp(self.P)
-				self.vicon_x_pid.setKi(self.I)
-				self.vicon_x_pid.setKd(self.D)
 				
 				#Update setpoint
 				self.pos_y_sp = rospy.get_param('/attitude_thrust_publisher/pos_y_sp')
 				self.pos_x_sp = rospy.get_param('/attitude_thrust_publisher/pos_x_sp')
 				self.vicon_y_pid.SetPoint = self.pos_y_sp
 				self.vicon_x_pid.SetPoint = self.pos_x_sp
-				if(self.current_state=='OFFBOARD'):
-					self.vicon_y_pid.update(self.vicon_y_pos)
-					self.vicon_x_pid.update(self.vicon_x_pos)
-				else:
-					self.vicon_y_pid.clear()
-					self.vicon_x_pid.clear()
+				self.vicon_y_pid.update(self.vicon_y_pos)
+				self.vicon_x_pid.update(self.vicon_x_pos)
+
 				
 				vicon_y_output = self.vicon_y_pid.output
 				vicon_x_output = -self.vicon_x_pid.output

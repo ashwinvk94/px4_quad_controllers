@@ -60,8 +60,6 @@ class test:
 				
 				if(self.current_state=='OFFBOARD'):
 					self.height_pid.update(self.vicon_height)
-					
-		
 				#For this to work, we have to align x,y of quad and vicon
 				
 				thrust_output = self.height_pid.output+0.5
