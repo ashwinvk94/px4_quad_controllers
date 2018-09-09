@@ -26,8 +26,6 @@ class test:
 		self.vicon_cb_flag = False
 		self.state_cb_flag = False
 
-		self.pid_clear_flag = False
-
 		self.P = rospy.get_param('/attitude_thrust_publisher/height_hover_P')
 		self.I = rospy.get_param('/attitude_thrust_publisher/height_hover_I')
 		self.D = rospy.get_param('/attitude_thrust_publisher/height_hover_D')
@@ -61,11 +59,9 @@ class test:
 				self.height_pid.SetPoint = self.height_sp
 				
 				if(self.current_state=='OFFBOARD'):
-					self.pid_clear_flag = False
 					self.height_pid.update(self.vicon_height)
-				elif(self.pid_clear_flag == False):
+				else:
 					self.height_pid.clear()
-					self.pid_clear_flag = True
 				#For this to work, we have to align x,y of quad and vicon
 				
 				thrust_output = self.height_pid.output+0.5
