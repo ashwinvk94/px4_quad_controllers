@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "traj_follow_controller");
 	ros::NodeHandle n;
-	cout<<" d1"<<endl;
+	// cout<<" d1"<<endl;
 	if (argc < 2)
 	{
 		cout << "Enter the following arguments ..\n"
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 
 	ros::Rate loop_rate(30);
 	bool is_initial_condition = true;
-cout<<" d5"<<endl;
+// cout<<" d5"<<endl;
 	int count = 0;
 	while (ros::ok())
 	{	
@@ -133,14 +133,6 @@ cout<<" d5"<<endl;
 	// cout<<" d7"<<endl;
 			// mode_ = "OFFBOARD";
 			if(mode_ == "OFFBOARD")
-			{
-				next_set_point.pose = trajectory_pts.poses.at(0);
-				prev_set_point.pose = trajectory_pts.poses.at(0);
-				next_set_point.header.stamp = ros::Time::now();
-				next_set_point_pub.publish(next_set_point);
-				cout<<"pub in OFFBOARD mode"<<endl;
-			}
-			else
 			{
 				// int number_of_closest_waypoints = 0;
 				for(int index=0; index < trajectory_pts_size; index++)
@@ -170,7 +162,7 @@ cout<<" d5"<<endl;
 		            }
 		        }
 
-		        cout<<" d8"<<endl;
+		        // cout<<" d8"<<endl;
 		     //    if(number_of_closest_waypoints = 1)
 		    	// {
 		    		//case 1 prev_point is start
@@ -181,6 +173,14 @@ cout<<" d5"<<endl;
 		    	// 	{
 			    // 		//solve this edge case
 		    	// 	}
+			}
+			else
+			{
+				next_set_point.pose = trajectory_pts.poses.at(0);
+				prev_set_point.pose = trajectory_pts.poses.at(0);
+				next_set_point.header.stamp = ros::Time::now();
+				next_set_point_pub.publish(next_set_point);
+				cout<<"pub in OFFBOARD mode"<<endl;
 	    	}
 	    }
 			
