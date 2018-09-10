@@ -66,7 +66,11 @@ class test:
 				self.height_pid.setKi(self.I)
 				self.height_pid.setKd(self.D)
 				#Update setpoint
-				self.height_sp = rospy.get_param('/attitude_thrust_publisher/height_sp')
+				if(self.pos_sp_cb_flag==False):
+					self.height_sp = rospy.get_param('/attitude_thrust_publisher/height_sp')
+				else:
+					self.height_sp = self.pos_sp_z				
+
 				self.height_pid.SetPoint = self.height_sp
 				
 				if(self.current_state=='OFFBOARD'):
@@ -102,7 +106,6 @@ class test:
 		self.vicon_height = state.pose.pose.position.z
 		self.vicon_cb_flag = True
 
-=======
 		self.rate = rospy.Rate(20.0) # MUST be more then 2Hz
 		
 		self.height_target_pub = rospy.Publisher("/px4_quad_controllers/thrust_setpoint", PoseStamped, queue_size=10)
@@ -113,40 +116,6 @@ class test:
 		state_sub = rospy.Subscriber("/mavros/state", State, self.state_subscriber_callback)
 
 		pos_sp_sub = rospy.Subscriber("/px4_quad_controllers/pos_sp", PoseStamped, self.pos_sp_subscriber_callback)
-
-		
-		while not rospy.is_shutdown():
-		
-			if(self.vicon_cb_flag==True and self.state_cb_flag==True):
-				#Update PID
-				self.P = rospy.get_param('/attitude_thrust_publisher/height_hover_P')
-				self.I = rospy.get_param('/attitude_thrust_publisher/height_hover_I')
-				self.D = rospy.get_param('/attitude_thrust_publisher/height_hover_D')
-				self.height_pid.setKp(self.P)
-				self.height_pid.setKi(self.I)
-				self.height_pid.setKd(self.D)
-				#Update setpoint
-				if(self.pos_sp_cb_flag==False):
-					self.height_sp = rospy.get_param('/attitude_thrust_publisher/height_sp')
-				else:
-					self.height_sp = self.pos_sp_z
-				self.height_pid.SetPoint = self.height_sp
-				if(self.current_state=='OFFBOARD'):
-					self.height_pid.update(self.vicon_height)
-				else:
-					self.height_pid.clear()
-		
-				#For this to work, we have to align x,y of quad and vicon
-				
-				thrust_output = self.height_pid.output+0.5
-				target_thrust = PoseStamped()
-				target_thrust.header.frame_id = "home"
-				target_thrust.header.stamp = rospy.Time.now()
-				target_thrust.pose.position.x = thrust_output
-
-				self.height_target_pub.publish(target_thrust)
-
-			self.rate.sleep()
 
 	def vicon_sub_callback(self,state):
 		self.vicon_height = state.pose.pose.position.z

@@ -72,14 +72,13 @@ class test:
 				else:
 					self.pos_y_sp = self.pos_sp_y_traj_gen
 					self.pos_x_sp = self.pos_sp_x_traj_gen
+				
 				self.roll_pid.SetPoint = self.pos_y_sp
 				self.pitch_pid.SetPoint = self.pos_x_sp
-				if(self.current_state=='OFFBOARD'):
-					self.roll_pid.update(self.vicon_y_pos)
-					self.pitch_pid.update(self.vicon_x_pos)
-				else:
-					self.roll_pid.clear()
-					self.pitch_pid.clear()
+
+				self.roll_pid.update(self.vicon_y_pos)
+				self.pitch_pid.update(self.vicon_x_pos)
+
 				
 				vicon_y_output = self.vicon_y_pid.output
 				vicon_x_output = -self.vicon_x_pid.output
