@@ -67,8 +67,8 @@ class test:
 					self.pos_y_sp = rospy.get_param('/attitude_thrust_publisher/pos_y_sp')
 					self.pos_x_sp = rospy.get_param('/attitude_thrust_publisher/pos_x_sp')
 				else:
-					self.pos_sp_x = state.pose.position.x
-					self.pos_sp_y = state.pose.position.y
+					self.pos_y_sp = self.pos_sp_y_traj_gen
+					self.pos_x_sp = self.pos_sp_x_traj_gen
 				self.roll_pid.SetPoint = self.pos_y_sp
 				self.pitch_pid.SetPoint = self.pos_x_sp
 				if(self.current_state=='OFFBOARD'):
@@ -96,8 +96,8 @@ class test:
 		self.vicon_cb_flag = True
 
 	def pos_sp_subscriber_callback(self,state):
-		self.pos_sp_x = state.pose.position.x
-		self.pos_sp_y = state.pose.position.y
+		self.pos_sp_x_traj_gen = state.pose.position.x
+		self.pos_sp_y_traj_gen = state.pose.position.y
 		self.pos_sp_cb_flag = True
 
 	#Current state subscriber
