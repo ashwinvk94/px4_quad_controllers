@@ -5,7 +5,7 @@ thrust_sp: 0.45
 
 pos_x_sp: 0
 pos_y_sp: 0
-height_sp: 0.5
+height_sp: 1
 yaw_sp: 0
 
 position_controller_P: 0.25

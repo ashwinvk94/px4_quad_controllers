@@ -25,6 +25,8 @@ class test:
     def __init__(self):
         self.vicon_cb_flag = False
         self.state_cb_flag = False
+		self.pos_sp_cb_flag = False
+
 
         self.P = rospy.get_param('/attitude_thrust_publisher/height_hover_P')
         self.I = rospy.get_param('/attitude_thrust_publisher/height_hover_I')
@@ -42,6 +44,8 @@ class test:
 
         state_sub = rospy.Subscriber("/mavros/state", State, self.state_subscriber_callback)
 
+        pos_sp_sub = rospy.Subscriber("/px4_quad_controllers/pos_sp", PoseStamped, self.pos_sp_subscriber_callback)
+
         
         while not rospy.is_shutdown():
 	    
@@ -54,7 +58,10 @@ class test:
                 self.height_pid.setKi(self.I)
                 self.height_pid.setKd(self.D)
                 #Update setpoint
-                self.height_sp = rospy.get_param('/attitude_thrust_publisher/height_sp')
+                if(self.pos_sp_cb_flag==False):
+                	self.height_sp = rospy.get_param('/attitude_thrust_publisher/height_sp')
+                else:
+                	self.height_sp = self.pos_sp_z
                 self.height_pid.SetPoint = self.height_sp
                 if(self.current_state=='OFFBOARD'):
                     self.height_pid.update(self.vicon_height)
@@ -81,6 +88,10 @@ class test:
     def state_subscriber_callback(self,state):
         self.current_state = state.mode
         self.state_cb_flag = True
+
+	def pos_sp_subscriber_callback(self,state):
+		self.pos_sp_z = state.pose.position.z
+		self.pos_sp_cb_flag = True
 
         self.rate.sleep()
 def main(args):
