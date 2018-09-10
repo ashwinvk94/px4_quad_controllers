@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -19,7 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
+## See http://ros.org/doc/api/catkin/html/user_guide/.html
 # catkin_python_setup()
 
 ################################################
@@ -129,6 +130,10 @@ include_directories(
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(trajectory_follow_controller src/traj_follow.cpp)
+# add_dependencies(trajectory_follow_controller _generate_messages_cpp)
+target_link_libraries(trajectory_follow_controller
+                      ${catkin_LIBRARIES})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
