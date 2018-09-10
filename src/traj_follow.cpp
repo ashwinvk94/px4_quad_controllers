@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 	trajectory_sub = n.subscribe<geometry_msgs::PoseArray>("points_traj", 10, get_trajectory_callback);
 	state_sub = n.subscribe<mavros_msgs::State>("/mavros/state",5, state_callback);
 	// cout<<" d3"<<endl;
-	next_set_point_pub = n.advertise<geometry_msgs::PoseStamped>("position_next",10);
+	next_set_point_pub = n.advertise<geometry_msgs::PoseStamped>("/px4_quad_controllers/pos_sp",10);
 	// cout<<" d4"<<endl;
 
 	ros::Rate loop_rate(30);
