@@ -20,5 +20,7 @@ vicon_yaw_sp: 1.5708
 
 traj_yaw_sp: 0
 
+hover_thrust: 0.52
+
 min_thrust: 0.47
 max_thrust: 0.8

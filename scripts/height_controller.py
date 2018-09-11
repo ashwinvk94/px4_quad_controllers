@@ -37,10 +37,6 @@ class test:
 		self.I = rospy.get_param('/attitude_thrust_publisher/height_hover_I')
 		self.D = rospy.get_param('/attitude_thrust_publisher/height_hover_D')
 
-		self.min_thrust = rospy.get_param('/attitude_thrust_publisher/min_thrust')
-		self.max_thrust = rospy.get_param('/attitude_thrust_publisher/max_thrust')
-
-
 		self.height_pid = PID.PID(self.P, self.I, self.D)
 
 		#Rate init
@@ -82,11 +78,16 @@ class test:
 					self.pid_reset_flag=False
 					self.state_pid_reset_flag=False
 				#For this to work, we have to align x,y of quad and vicon
+
+				self.hover_thrust = rospy.get_param('/attitude_thrust_publisher/hover_thrust')
 				
-				thrust_output = self.height_pid.output+0.52
+				thrust_output = self.height_pid.output+self.hover_thrust
 				target_thrust = PoseStamped()
 				target_thrust.header.frame_id = "home"
 				target_thrust.header.stamp = rospy.Time.now()
+
+				self.min_thrust = rospy.get_param('/attitude_thrust_publisher/min_thrust')
+				self.max_thrust = rospy.get_param('/attitude_thrust_publisher/max_thrust')
 
 				#Thrust threshold
 				if(thrust_output<=self.max_thrust and thrust_output>=self.min_thrust):
