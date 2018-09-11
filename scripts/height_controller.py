@@ -83,7 +83,7 @@ class test:
 					self.state_pid_reset_flag=False
 				#For this to work, we have to align x,y of quad and vicon
 				
-				thrust_output = self.height_pid.output+0.5
+				thrust_output = self.height_pid.output+0.52
 				target_thrust = PoseStamped()
 				target_thrust.header.frame_id = "home"
 				target_thrust.header.stamp = rospy.Time.now()

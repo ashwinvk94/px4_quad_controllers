@@ -60,12 +60,6 @@ class test:
 				
 				#Update setpoint
 
-				self.vicon_y_pid.SetPoint = self.pos_y_sp
-				self.vicon_x_pid.SetPoint = self.pos_x_sp
-				self.vicon_y_pid.update(self.vicon_y_pos)
-				self.vicon_x_pid.update(self.vicon_x_pos)
-
-
 				if(self.pos_sp_cb_flag==False):
 					self.pos_y_sp = rospy.get_param('/attitude_thrust_publisher/pos_y_sp')
 					self.pos_x_sp = rospy.get_param('/attitude_thrust_publisher/pos_x_sp')
@@ -73,11 +67,11 @@ class test:
 					self.pos_y_sp = self.pos_sp_y_traj_gen
 					self.pos_x_sp = self.pos_sp_x_traj_gen
 				
-				self.roll_pid.SetPoint = self.pos_y_sp
-				self.pitch_pid.SetPoint = self.pos_x_sp
+				self.vicon_y_pid.SetPoint = self.pos_y_sp
+				self.vicon_x_pid.SetPoint = self.pos_x_sp
 
-				self.roll_pid.update(self.vicon_y_pos)
-				self.pitch_pid.update(self.vicon_x_pos)
+				self.vicon_y_pid.update(self.vicon_y_pos)
+				self.vicon_x_pid.update(self.vicon_x_pos)
 
 				
 				vicon_y_output = self.vicon_y_pid.output
