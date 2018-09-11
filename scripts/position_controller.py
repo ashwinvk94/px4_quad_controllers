@@ -55,6 +55,12 @@ class test:
 		self.traj_yaw_pub = rospy.Publisher("/px4_quad_controllers/traj_yaw", PoseStamped, queue_size=10)
 
 		while not rospy.is_shutdown():
+			self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
+			self.D = rospy.get_param('/attitude_thrust_publisher/position_controller_D')
+			self.vicon_y_pid.setKp(self.P)
+			self.vicon_y_pid.setKd(self.D)
+			self.vicon_x_pid.setKp(self.P)
+			self.vicon_x_pid.setKd(self.D)
 		
 			if(self.vicon_cb_flag==True and self.state_cb_flag==True):
 				
