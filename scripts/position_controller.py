@@ -3,7 +3,7 @@ import numpy
 import rospy
 import math
 import mavros
-from geometry_msgs.msg import PoseStamped,Vector3
+from geometry_msgs.msg import PoseStamped,Vector3,TwistStamped
 from mavros_msgs.msg import State,AttitudeTarget
 from mavros_msgs.srv import CommandBool, SetMode
 
@@ -43,8 +43,9 @@ class test:
 		#Rate init
 		#DECIDE ON PUBLISHING RATE
 		self.rate = rospy.Rate(20.0) # MUST be more then 2Hz
-
-		self.attitude_target_pub = rospy.Publisher("/px4_quad_controllers/rpy_setpoint", PoseStamped, queue_size=10)
+		#PUBLISHER
+		self.velocity_target_pub = rospy.Publisher("/px4_quad_controllers/vel_setpoint", TwistStamped, queue_size=10)
+		self.traj_yaw_pub = rospy.Publisher("/px4_quad_controllers/traj_yaw", PoseStamped, queue_size=10)
 
 		#ADD SUBSCRIBER FOR VICON DATA
 		vicon_sub = rospy.Subscriber("/intel_aero_quad/odom", Odometry, self.vicon_subscriber_callback)
@@ -52,7 +53,6 @@ class test:
 		state_sub = rospy.Subscriber("/mavros/state", State, self.state_subscriber_callback)
 		pos_sp_sub = rospy.Subscriber("/px4_quad_controllers/pos_sp", PoseStamped, self.pos_sp_subscriber_callback)
 
-		self.traj_yaw_pub = rospy.Publisher("/px4_quad_controllers/traj_yaw", PoseStamped, queue_size=10)
 
 		while not rospy.is_shutdown():
 			self.P = rospy.get_param('/attitude_thrust_publisher/position_controller_P')
@@ -82,11 +82,12 @@ class test:
 				
 				vicon_y_output = self.vicon_y_pid.output
 				vicon_x_output = -self.vicon_x_pid.output
-				target_attitude = PoseStamped()
-				target_attitude.header.frame_id = "home"
-				target_attitude.header.stamp = rospy.Time.now()
-				target_attitude.pose.position.x = -vicon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
-				target_attitude.pose.position.y = -vicon_y_output * math.sin(self.yaw_change) +  vicon_x_output * math.cos(self.yaw_change) #pitch
+				target_velocity = TwistStamped()
+				target_velocity.header.frame_id = "home"
+				target_velocity.header.stamp = rospy.Time.now()
+				# change here....calculate velocity
+				target_velocity.twist.linear.x = -vicon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
+				target_velocity.twist.linear.y = -vicon_y_output * math.sin(self.yaw_change) +  vicon_x_output * math.cos(self.yaw_change) #pitch
 
 				target_traj_yaw_sp = PoseStamped()
 				target_traj_yaw_sp.header.frame_id = "home"
@@ -95,7 +96,7 @@ class test:
 
 				target_traj_yaw_sp.pose.position.x = self.traj_yaw_sp
 
-				self.attitude_target_pub.publish(target_attitude)
+				self.velocity_target_pub.publish(target_velocity)
 				self.traj_yaw_pub.publish(target_traj_yaw_sp)
 
 			self.rate.sleep()

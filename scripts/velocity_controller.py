@@ -3,7 +3,7 @@ import numpy
 import rospy
 import math
 import mavros
-from geometry_msgs.msg import PoseStamped,Vector3
+from geometry_msgs.msg import PoseStamped,Vector3,TwistStamped
 from mavros_msgs.msg import State,AttitudeTarget
 from mavros_msgs.srv import CommandBool, SetMode
 
@@ -43,14 +43,13 @@ class test:
 		#DECIDE ON PUBLISHING RATE
 		self.rate = rospy.Rate(20.0) # MUST be more then 2Hz
 
+		#PUBLISHERS
 		self.attitude_target_pub = rospy.Publisher("/px4_quad_controllers/rpy_setpoint", PoseStamped, queue_size=10)
 
 		#SUBSCRIBERS
 		vicon_sub = rospy.Subscriber("/intel_aero_quad/odom", Odometry, self.vicon_subscriber_callback)
 		state_sub = rospy.Subscriber("/mavros/state", State, self.state_subscriber_callback)
-		vel_sp_sub = rospy.Subscriber("/px4_quad_controllers/vel_sp", PoseStamped, self.vel_sp_subscriber_callback)
-		#PUBLISHERS
-		self.traj_yaw_pub = rospy.Publisher("/px4_quad_controllers/traj_yaw", PoseStamped, queue_size=10)
+		vel_sp_sub = rospy.Subscriber("/px4_quad_controllers/vel_setpoint", TwistStamped, self.vel_sp_subscriber_callback)
 
 
 		while not rospy.is_shutdown():
@@ -87,15 +86,7 @@ class test:
 				target_attitude.pose.position.x = -vicon_y_output * math.cos(self.yaw_change) - vicon_x_output * math.sin(self.yaw_change) #roll -
 				target_attitude.pose.position.y = -vicon_y_output * math.sin(self.yaw_change) +  vicon_x_output * math.cos(self.yaw_change) #pitch
 
-				# target_traj_yaw_sp = PoseStamped()
-				# target_traj_yaw_sp.header.frame_id = "home"
-				# target_traj_yaw_sp.header.stamp = rospy.Time.now()
-				# self.traj_yaw_sp = rospy.get_param('/attitude_thrust_publisher/traj_yaw_sp')
-
-				# target_traj_yaw_sp.pose.position.x = self.traj_yaw_sp
-
 				self.attitude_target_pub.publish(target_attitude)
-				# self.traj_yaw_pub.publish(target_traj_yaw_sp)
 
 			self.rate.sleep()
 
@@ -112,8 +103,8 @@ class test:
 		self.vicon_cb_flag = True
 
 	def vel_sp_subscriber_callback(self,state):
-		self.vel_sp_x_from_pos_ctrl = state.pose.position.x
-		self.vel_sp_y_from_pos_ctrl = state.pose.position.y
+		self.vel_sp_x_from_pos_ctrl = state.twist.linear.x
+		self.vel_sp_y_from_pos_ctrl = state.twist.linear.y
 		self.vel_sp_cb_flag = True
 
 	#Current state subscriber
