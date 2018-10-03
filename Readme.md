@@ -28,7 +28,7 @@ catkin_make
 ## Notes
 Always start mavros before using any of the functionalities of this repo. On the intel aero drone, this can be done by running the following command on a terminal:
 ```
-rosrun mavros mavros_node _fcu_url:=tcp://127.0.0.1:576_system_:=2
+rosrun mavros mavros_node _fcu_url:=tcp://127.0.0.1:5760 _system_id:=2
 ```
 Also, you can ssh into the aero drone using the following command:
 '''

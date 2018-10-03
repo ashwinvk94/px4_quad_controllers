@@ -15,6 +15,15 @@ position_controller_D: 0.2
 velocity_controller_P: 0.2
 velocity_controller_D: 0.05
 
+
+speed_controller_x_P: 1
+speed_controller_x_I: 0
+speed_controller_x_D: 0
+
+speed_controller_y_P: 1
+speed_controller_y_I: 0
+speed_controller_y_D: 0
+
 height_hover_P: 0.7
 height_hover_I: 0.0
 height_hover_D: 0.13
@@ -27,3 +36,6 @@ hover_thrust: 0.52
 
 min_thrust: 0.47
 max_thrust: 0.8
+
+dx_sp: 0
+dy_sp: 0
