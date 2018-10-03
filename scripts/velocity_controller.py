@@ -3,7 +3,7 @@ import rospy
 import mavros
 import PID
 import math
-
+import sys
 from geometry_msgs.msg import PoseStamped
 from mavros_msgs.msg import State
 from nav_msgs.msg import Odometry
@@ -23,7 +23,7 @@ class test:
 	dx_sp
 	"""
 
-	def updateParamData():
+	def updateParamData(self):
 		# SetPoint Data
 		self.dx_sp = rospy.get_param('/attitude_thrust_publisher/dx_sp')
 		self.dy_sp = rospy.get_param('/attitude_thrust_publisher/dy_sp')
@@ -37,7 +37,7 @@ class test:
 		self.dy_I = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_I')
 		self.dy_D = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_D')
 
-	def updatePID():
+	def updatePID(self):
 		# Update the PID with the speed data from vicon
 		self.vicon_dx_pid.update(self.vicon_dx)
 		self.vicon_dy_pid.update(self.vicon_dy)
