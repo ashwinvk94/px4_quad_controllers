@@ -3,7 +3,7 @@ import rospy
 import mavros
 import PID
 import math
-
+import sys
 from geometry_msgs.msg import PoseStamped
 from mavros_msgs.msg import State
 from nav_msgs.msg import Odometry
@@ -23,11 +23,8 @@ class test:
 	dx_sp
 	"""
 
-	def updateParamData():
 		
 
-	def updatePID():
-		
 
 	def __init__(self):
 		self.vicon_cb_flag = False
