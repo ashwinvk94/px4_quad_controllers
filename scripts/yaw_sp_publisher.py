@@ -35,7 +35,6 @@ class test:
 
 		self.current_state = State()
 
-
 		#Init last_request
 		self.last_request = rospy.get_rostime()
 
@@ -50,10 +49,11 @@ class test:
 
 
 		while not rospy.is_shutdown():
-			if(self.vicon_cb_flag == True and self.imu_cb_flag == True and self.traj_cb_flag == True):
+			if(self.vicon_cb_flag == True and self.imu_cb_flag == True):
 
 				self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
-
+				if(self.traj_cb_flag == False):
+					self.traj_yaw_sp = 0
 				self.yaw_sp = self.current_yaw_vicon - (self.vicon_yaw_sp+self.traj_yaw_sp)
 
 				target_yaw = PoseStamped()

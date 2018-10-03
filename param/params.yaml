@@ -39,3 +39,5 @@ max_thrust: 0.8
 
 dx_sp: 0
 dy_sp: 0
+
+attitude_threshold: 0.6

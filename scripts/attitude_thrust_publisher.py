@@ -37,7 +37,7 @@ class test:
         yaw_target_sub = rospy.Subscriber("/px4_quad_controllers/yaw_setpoint", PoseStamped, self.yaw_setpoint_sub_callback)
         #Manual control sub
         thrust_target_sub = rospy.Subscriber("/mavros/rc/in", RCIn, self.rc_in_sub_callback)
-        
+        self.attitude_threshold = rospy.get_param('/attitude_thrust_publisher/attitude_threshold') 
         while not rospy.is_shutdown():
             # if(self.att_sp_cb_flag==True and self.thrust_sp_cb_flag==True):
             
@@ -50,9 +50,7 @@ class test:
                 #self.att_p = rospy.get_param('/attitude_thrust_publisher/att_p')
                 #self.att_y = rospy.get_param('/attitude_thrust_publisher/att_y')
                 #self.thrust_sp = rospy.get_param('/attitude_thrust_publisher/thrust_sp')
-                #Manual control
-                #self.att_r = self.rc_roll
-                #self.att_p = -self.rc_pitch
+                
 
 
                 # print 'att_r'+str(att_r)
@@ -61,7 +59,19 @@ class test:
                 # print 'thrust_sp'+str(thrust_sp)
                 # print('\n')
 
-                att_quat_w,att_quat_x,att_quat_y,att_quat_z = tf.transformations.quaternion_from_euler(self.att_y,self.att_p,self.att_r, axes='sxyz')
+                temp_att_r = att_r
+                temp_att_p = att_p
+
+                if temp_att_p>self.attitude_threshold:
+                    temp_att_p=self.attitude_threshold
+                if temp_att_r>self.attitude_threshold:
+                    temp_att_r=self.attitude_threshold
+
+                #Manual control
+                #self.temp_att_r = self.rc_roll
+                self.temp_att_p = -self.rc_pitch
+
+                att_quat_w,att_quat_x,att_quat_y,att_quat_z = tf.transformations.quaternion_from_euler(self.att_y,self.temp_att_p,self.temp_att_r, axes='sxyz')
                 
                 target_attitude_thrust = AttitudeTarget()
                 target_attitude_thrust.header.frame_id = "home"
