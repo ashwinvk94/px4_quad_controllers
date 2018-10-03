@@ -24,34 +24,10 @@ class test:
 	"""
 
 	def updateParamData():
-		# SetPoint Data
-		self.dx_sp = rospy.get_param('/attitude_thrust_publisher/dx_sp')
-		self.dy_sp = rospy.get_param('/attitude_thrust_publisher/dy_sp')
-
-		# PID Data
-		self.dx_P = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_P')
-		self.dx_I = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_I')
-		self.dx_D = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_D')
-
-		self.dy_P = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_P')
-		self.dy_I = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_I')
-		self.dy_D = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_D')
+		
 
 	def updatePID():
-		# Update the PID with the speed data from vicon
-		self.vicon_dx_pid.update(self.vicon_dx)
-		self.vicon_dy_pid.update(self.vicon_dy)
-
-		# Change the PID coefficients if they changed
-		self.vicon_dx_pid.setKp(self.dx_P)
-		self.vicon_dx_pid.setKi(self.dx_I)
-		self.vicon_dx_pid.setKd(self.dx_D)
-		self.vicon_dy_pid.setKp(self.dy_P)
-		self.vicon_dy_pid.setKi(self.dy_I)
-		self.vicon_dy_pid.setKd(self.dy_D)
-
-		self.vicon_dy_pid.SetPoint = self.dy_sp
-		self.vicon_dx_pid.SetPoint = self.dx_sp
+		
 
 	def __init__(self):
 		self.vicon_cb_flag = False
@@ -63,7 +39,15 @@ class test:
 		self.pos_sp_cb_flag = False
 
 		# get the info for the PID and for the set point
-		updateParamData()
+		# PID Data
+		self.dx_P = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_P')
+		self.dx_I = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_I')
+		self.dx_D = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_D')
+
+		self.dy_P = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_P')
+		self.dy_I = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_I')
+		self.dy_D = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_D')
+
 
 		self.vicon_dx_pid = PID.PID(self.dx_P, self.dx_I, self.dx_D)
 		self.vicon_dy_pid = PID.PID(self.dy_P, self.dy_I, self.dy_D)
@@ -78,8 +62,34 @@ class test:
 		while not rospy.is_shutdown():
 			if (self.vicon_cb_flag and self.state_cb_flag): #If connected and data read in
 				# Update params if it was changed
-				updateParamData()
-				updatePID()
+				# SetPoint Data
+				self.dx_sp = rospy.get_param('/attitude_thrust_publisher/dx_sp')
+				self.dy_sp = rospy.get_param('/attitude_thrust_publisher/dy_sp')
+
+				# PID Data
+				self.dx_P = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_P')
+				self.dx_I = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_I')
+				self.dx_D = rospy.get_param('/attitude_thrust_publisher/speed_controller_x_D')
+
+				self.dy_P = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_P')
+				self.dy_I = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_I')
+				self.dy_D = rospy.get_param('/attitude_thrust_publisher/speed_controller_y_D')
+				
+				# Update the PID with the speed data from vicon
+				self.vicon_dx_pid.update(self.vicon_dx)
+				self.vicon_dy_pid.update(self.vicon_dy)
+
+				# Change the PID coefficients if they changed
+				self.vicon_dx_pid.setKp(self.dx_P)
+				self.vicon_dx_pid.setKi(self.dx_I)
+				self.vicon_dx_pid.setKd(self.dx_D)
+				self.vicon_dy_pid.setKp(self.dy_P)
+				self.vicon_dy_pid.setKi(self.dy_I)
+				self.vicon_dy_pid.setKd(self.dy_D)
+
+				self.vicon_dy_pid.SetPoint = self.dy_sp
+				self.vicon_dx_pid.SetPoint = self.dx_sp
+
 				vicon_y_output = self.vicon_y_pid.output
 				vicon_x_output = -self.vicon_x_pid.output
 				target_attitude_speed = PoseStamped()
