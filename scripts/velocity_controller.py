@@ -23,9 +23,6 @@ class test:
 	dx_sp
 	"""
 
-		
-
-
 	def __init__(self):
 		self.vicon_cb_flag = False
 		self.state_cb_flag = False
