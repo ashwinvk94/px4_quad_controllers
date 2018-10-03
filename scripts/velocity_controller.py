@@ -54,7 +54,7 @@ class test:
 		self.attitude_target_speed_pub = rospy.Publisher("/px4_quad_controllers/rpy_setpoint", PoseStamped, queue_size=10)
 		vicon_sub = rospy.Subscriber("/intel_aero_quad/odom", Odometry, self.vicon_subscriber_callback)
 		while not rospy.is_shutdown():
-			if (self.vicon_cb_flag and self.state_cb_flag): #If connected and data read in
+			if (self.vicon_cb_flag): #If connected and data read in
 				# Update params if it was changed
 				# SetPoint Data
 				self.dx_sp = rospy.get_param('/attitude_thrust_publisher/dx_sp')
@@ -72,7 +72,6 @@ class test:
 				# Update the PID with the speed data from vicon
 				self.vicon_dx_pid.update(self.vicon_dx)
 				self.vicon_dy_pid.update(self.vicon_dy)
-
 				# Change the PID coefficients if they changed
 				self.vicon_dx_pid.setKp(self.dx_P)
 				self.vicon_dx_pid.setKi(self.dx_I)
@@ -84,8 +83,8 @@ class test:
 				self.vicon_dy_pid.SetPoint = self.dy_sp
 				self.vicon_dx_pid.SetPoint = self.dx_sp
 
-				vicon_y_output = self.vicon_y_pid.output
-				vicon_x_output = -self.vicon_x_pid.output
+				vicon_y_output = self.vicon_dy_pid.output
+				vicon_x_output = -self.vicon_dx_pid.output
 				target_attitude_speed = PoseStamped()
 				target_attitude_speed.header.frame_id = "home"
 				target_attitude_speed.header.stamp = rospy.Time.now()
@@ -95,15 +94,6 @@ class test:
 				self.attitude_target_speed_pub.publish(target_attitude_speed)
 
 			self.rate.sleep()
-
-	# Current state subscriber
-	# To ensure looping while active
-	def state_subscriber_callback(self,state):
-		self.current_state = state.mode
-		self.state_cb_flag = state.connected # ask (to ensure that it is connected)
-
-	
-
 
 	def vicon_subscriber_callback(self,state):
 		# Speed
