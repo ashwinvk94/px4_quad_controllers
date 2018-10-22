@@ -1,25 +1,25 @@
 #!/usr/bin/env python
-import numpy
+# import numpy
 import rospy
-import mavros
-from geometry_msgs.msg import PoseStamped, Vector3
-from mavros_msgs.msg import State, AttitudeTarget, RCIn
-from mavros_msgs.srv import CommandBool, SetMode
+# import mavros
+from geometry_msgs.msg import PoseStamped  # , Vector3
+from mavros_msgs.msg import AttitudeTarget, RCIn  # , State
+# from mavros_msgs.srv import CommandBool, SetMode
 
-from std_msgs.msg import Bool, Float32
-from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Imu
+# from std_msgs.msg import Float32, Bool
+# from geometry_msgs.msg import Twist
+# from sensor_msgs.msg import Imu
 import tf.transformations
 import sys
-import time
+# import time
 
-import timeit
+# import timeit
 
-from argparse import ArgumentParser
+# from argparse import ArgumentParser
 
-from pyquaternion import Quaternion
+# from pyquaternion import Quaternion
 
-import roslaunch
+# import roslaunch
 
 
 class test:

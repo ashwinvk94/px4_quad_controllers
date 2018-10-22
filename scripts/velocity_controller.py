@@ -1,28 +1,28 @@
 #!/usr/bin/env python
 import rospy
-import mavros
+# import mavros
 import PID
-import math
+# import math
 import sys
 from geometry_msgs.msg import PoseStamped
-from mavros_msgs.msg import State
+# from mavros_msgs.msg import State
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import PoseStamped
-from geometry_msgs.msg import Twist
+# from geometry_msgs.msg import PoseStamped
+# from geometry_msgs.msg import Twist
 import tf.transformations
+
+# Params Used
+# speed_controller_x_P
+# speed_controller_x_I
+# speed_controller_x_D
+# speed_controller_y_P
+# speed_controller_y_I
+# speed_controller_y_D
+# dy_sp
+# dx_sp
 
 
 class test:
-    """ params to add
-    speed_controller_x_P
-    speed_controller_x_I
-    speed_controller_x_D
-    speed_controller_y_P
-    speed_controller_y_I
-    speed_controller_y_D
-    dy_sp
-    dx_sp
-    """
 
     def __init__(self):
         self.vicon_cb_flag = False

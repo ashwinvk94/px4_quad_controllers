@@ -1,26 +1,26 @@
 #!/usr/bin/env python
-import numpy
+# import numpy
 import rospy
-import mavros
+# import mavros
 from geometry_msgs.msg import PoseStamped
-from mavros_msgs.msg import State, PositionTarget, AttitudeTarget
-from mavros_msgs.srv import CommandBool, SetMode
+from mavros_msgs.msg import State  # , PositionTarget, AttitudeTarget
+# from mavros_msgs.srv import CommandBool, SetMode
 from nav_msgs.msg import Odometry
 
-from std_msgs.msg import Bool
-from geometry_msgs.msg import Twist
+# from std_msgs.msg import Bool
+# from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
 import tf.transformations
 import sys
-import time
+# import time
 
 import timeit
 
-from argparse import ArgumentParser
+# from argparse import ArgumentParser
 
-from pyquaternion import Quaternion
+# from pyquaternion import Quaternion
 
-import roslaunch
+# import roslaunch
 
 
 class test:
@@ -29,25 +29,24 @@ class test:
         self.vicon_cb_flag = False
         self.traj_cb_flag = False
 
-        self.local_pose_subscriber_prev = 0
-        startup_start = timeit.default_timer()
-        print('start')
+        self.local_pose_subscriber_prev = 0  # remove
+        startup_start = timeit.default_timer()  # remove
+        print('start')  #
 
         # Rate init
-        self.rate = rospy.Rate(1.0)
+        self.rate = rospy.Rate(10.0)  # 10 Hz
 
         self.current_state = State()
 
         # Init last_request
-        self.last_request = rospy.get_rostime()
+        self.last_request = rospy.get_rostime()  # remove
 
-        # Quadcopter imu subscriber init
+        # vicon yaw
         vicon_attitude_sub = rospy.Subscriber(
             "/intel_aero_quad/odom",
             Odometry,
             self.vicon_attitude_sub_callback)
-
-        # Quadcopter imu subscriber init
+        # IMU yaw
         attitude_target_sub = rospy.Subscriber(
             "/mavros/imu/data", Imu, self.attitude_target_sub_callback)
         traj_yaw_sub = rospy.Subscriber(
@@ -62,7 +61,7 @@ class test:
             if(self.vicon_cb_flag and self.imu_cb_flag):
 
                 self.vicon_yaw_sp = rospy.get_param(
-                    '/attitude_thrust_publisher/vicon_yaw_sp')
+                    '/attitude_thrust_publisher/vicon_yaw_sp')  # What is this?
                 if(not self.traj_cb_flag):
                     self.traj_yaw_sp = 0
                 self.yaw_sp = self.current_yaw_vicon - \
@@ -112,7 +111,6 @@ class test:
 def main(args):
     rospy.init_node('offb_node', anonymous=True)
     ic = test()
-
     try:
         rospy.spin()
     except rospy.ROSInterruptException:

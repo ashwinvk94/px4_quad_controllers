@@ -1,27 +1,27 @@
 #!/usr/bin/env python
-import numpy
+# import numpy
 import rospy
-import mavros
-from geometry_msgs.msg import PoseStamped, Vector3
-from mavros_msgs.msg import State, AttitudeTarget
-from mavros_msgs.srv import CommandBool, SetMode
+# import mavros
+from geometry_msgs.msg import PoseStamped  # , Vector3
+from mavros_msgs.msg import State  # , AttitudeTarget
+# from mavros_msgs.srv import CommandBool
 
-from std_msgs.msg import Bool, Float32
-from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Imu
+# from std_msgs.msg import Float32, Bool
+# from geometry_msgs.msg import Twist
+# from sensor_msgs.msg import Imu
 from nav_msgs.msg import Odometry
-import tf.transformations
+# import tf.transformations
 import sys
-import time
+# import time
 import PID
 
-import timeit
+# import timeit
 
-from argparse import ArgumentParser
+# from argparse import ArgumentParser
 
-from pyquaternion import Quaternion
+# from pyquaternion import Quaternion
 
-import roslaunch
+# import roslaunch
 
 
 class test:
@@ -160,7 +160,6 @@ class test:
     def pos_sp_subscriber_callback(self, state):
         self.pos_sp_z = state.pose.position.z
         self.pos_sp_cb_flag = True
-
         self.rate.sleep()
 
 
