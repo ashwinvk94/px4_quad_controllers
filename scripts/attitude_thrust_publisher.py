@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # import numpy
 import rospy
 # import mavros
@@ -77,8 +77,8 @@ class test:
                 # print 'thrust_sp'+str(thrust_sp)
                 # print('\n')
 
-                temp_att_r = att_r
-                temp_att_p = att_p
+                temp_att_r = self.att_r
+                temp_att_p = self.att_p
 
                 if temp_att_p > self.attitude_threshold:
                     temp_att_p = self.attitude_threshold
