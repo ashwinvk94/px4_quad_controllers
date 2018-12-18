@@ -29,6 +29,8 @@ cd src
 git clone https://github.com/ashwinvk94/px4_quad_controllers
 catkin_make
 ```
+### TX2 setup Instructions
+https://github.com/jetsonhacks/installROSTX2
 
 ## Notes
 Always start mavros before using any of the functionalities of this repo. On the intel aero drone, this can be done by running the following command on a terminal:
