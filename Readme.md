@@ -50,5 +50,8 @@ Now if you move the flight mode to "OFFBOARD" mode, then it will go that the att
 
 ## TODO
 
+* Create manual contorl node to control through RC.
+* Create hover thrust control node and test while using manual rc control for roll pitch and yaw
+* Test PID controllers for roll and pitch setpoints
 * Test offboard mode while publishing atitude setpoints
 
