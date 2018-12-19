@@ -10,14 +10,11 @@ The position feedback will be done using the vicon system.
 
 ### Dependencies
 
-1. ROS (http://wiki.ros.org/kinetic/Installation)
-2. mavros (https://github.com/mavlink/mavros/blob/master/mavros/README.md#installation)
 
-1. Install the repository and its dependencies (with rosinstall):
 
-```
-sudo apt-get install ros-kinetic-mavros ros-kinetic-mavros-extras
-```
+1. Install the repository and its dependencies:
+* ROS (http://wiki.ros.org/kinetic/Installation)
+* mavros (https://github.com/mavlink/mavros/blob/master/mavros/README.md#installation)
 
 2. Set up a catkin workspace (if not already done):
 
