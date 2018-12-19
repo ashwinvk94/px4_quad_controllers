@@ -16,6 +16,8 @@ The position feedback will be done using the vicon system.
 * ROS (http://wiki.ros.org/kinetic/Installation)
 * mavros (https://github.com/mavlink/mavros/blob/master/mavros/README.md#installation)
 
+For asll tests, mavros was installed from source. The instructions to install from source in available in the above mentioned link.
+
 2. Set up a catkin workspace (if not already done):
 
 ```
