@@ -22,7 +22,7 @@ position_controller_x_D: 0.08
 position_controller_y_P: 0.3
 position_controller_y_D: 0.08
 
-height_hover_P: 0.7
+height_hover_P: 
 height_hover_I: 0.0
 height_hover_D: 0.15
 

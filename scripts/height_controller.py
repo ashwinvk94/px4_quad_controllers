@@ -34,6 +34,8 @@ class test:
 
         self.pos_sp_cb_flag = False
 
+        self.update_pos_sp_flag = False
+
         self.P = rospy.get_param('/attitude_thrust_publisher/height_hover_P')
         self.I = rospy.get_param('/attitude_thrust_publisher/height_hover_I')
         self.D = rospy.get_param('/attitude_thrust_publisher/height_hover_D')
@@ -57,7 +59,7 @@ class test:
 
         state_sub = rospy.Subscriber(
             "/mavros/state", State, self.state_subscriber_callback)
-
+        rospy.Subscriber("/evdodge/positionSetpoint", Odometry, self.positionSetpoint_callback)
         while not rospy.is_shutdown():
 
             if(self.vicon_cb_flag and self.state_cb_flag):
@@ -78,16 +80,9 @@ class test:
                 else:
                     self.height_sp = self.pos_sp_z
 
-                self.height_pid.SetPoint = self.height_sp
+                self.height_pid.SetPoint = self.height_sp + self.pos_update_z 
 
-                if(self.current_state == 'OFFBOARD'):
-                    if(not self.pid_reset_flag):
-                        self.height_pid.clear()
-                        self.pid_reset_flag = True
-                    self.height_pid.update(self.vicon_height)
-                else:
-                    self.pid_reset_flag = False
-                    self.state_pid_reset_flag = False
+                self.height_pid.update(self.vicon_height)
                 # For this to work, we have to align x,y of quad and vicon
 
                 self.hover_thrust = rospy.get_param(
@@ -162,6 +157,13 @@ class test:
         self.pos_sp_cb_flag = True
         self.rate.sleep()
 
+    def positionSetpoint_callback(self,state):
+        pos_update_temp_z = state.pose.position.z
+
+        if pos_update_temp_z<1.0:
+            self.pos_update_z = pos_update_temp_z
+
+        self.update_pos_sp_flag = True
 
 def main(args):
     rospy.init_node('offb_node', anonymous=True)

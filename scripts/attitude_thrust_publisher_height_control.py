@@ -25,7 +25,6 @@ import sys
 class test:
     def __init__(self):
 
-        self.att_sp_cb_flag = False
         self.thrust_sp_cb_flag = False
         self.rc_cb_flag = False
         self.yaw_sp_cb_flag = False
@@ -36,10 +35,6 @@ class test:
 
         self.attitude_thrust_pub = rospy.Publisher(
             "/mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=10)
-        attitude_target_sub = rospy.Subscriber(
-            "/px4_quad_controllers/rpy_setpoint",
-            PoseStamped,
-            self.attitude_setpoint_sub_callback)
         thrust_target_sub = rospy.Subscriber(
             "/px4_quad_controllers/thrust_setpoint",
             PoseStamped,
@@ -56,8 +51,7 @@ class test:
         while not rospy.is_shutdown():
             # if(self.att_sp_cb_flag==True and self.thrust_sp_cb_flag==True):
 
-            if(self.rc_cb_flag and self.att_sp_cb_flag
-                    and self.yaw_sp_cb_flag):
+            if(self.rc_cb_flag and self.yaw_sp_cb_flag):
                 if(not self.thrust_sp_cb_flag):
                     self.thrust_sp = rospy.get_param(
                         '/attitude_thrust_publisher/thrust_sp')
@@ -76,23 +70,16 @@ class test:
                 # print 'att_y'+str(att_y)
                 # print 'thrust_sp'+str(thrust_sp)
                 # print('\n')
-                #temp_att_r = self.rc_roll
-                #temp_att_p = -self.rc_pitch
 
-                temp_att_r = self.att_r
-                temp_att_p = self.att_p
-
-                if temp_att_p > self.attitude_threshold:
-                    temp_att_p = self.attitude_threshold
-                if temp_att_r > self.attitude_threshold:
-                    temp_att_r = self.attitude_threshold
-
-                # Manual control
+                # temp_att_r = self.att_r
+                # temp_att_p = self.att_p
+                self.att_r = self.rc_roll
+                self.att_p = -self.rc_pitch
 
                 att_quat_w, att_quat_x, att_quat_y, att_quat_z = \
                     tf.transformations.quaternion_from_euler(
-                        self.att_y, temp_att_p,
-                        temp_att_r, axes='sxyz')
+                        self.att_y, self.att_p,
+                        self.att_r, axes='sxyz')
 
                 target_attitude_thrust = AttitudeTarget()
                 target_attitude_thrust.header.frame_id = "home"
@@ -107,17 +94,10 @@ class test:
 
             self.rate.sleep()
 
-    def attitude_setpoint_sub_callback(self, state):
-        self.att_r = state.pose.position.x
-        self.att_p = state.pose.position.y
-        # self.att_y = state.pose.position.z
-        self.att_sp_cb_flag = True
-
     def yaw_setpoint_sub_callback(self, state):
-        if self.yaw_sp_cb_flag==False:
-		self.att_y = state.pose.position.x
-        	# self.att_y = state.pose.position.z
-        	self.yaw_sp_cb_flag = True
+        self.att_y = state.pose.position.x
+        # self.att_y = state.pose.position.z
+        self.yaw_sp_cb_flag = True
 
     def thrust_setpoint_sub_callback(self, state):
         self.thrust_sp = state.pose.position.x

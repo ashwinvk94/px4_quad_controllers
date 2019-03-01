@@ -63,7 +63,7 @@ class test:
                 self.vicon_yaw_sp = rospy.get_param(
                     '/attitude_thrust_publisher/vicon_yaw_sp')  # What is this?
                 if(not self.traj_cb_flag):
-                    self.traj_yaw_sp = 0
+                    self.traj_yaw_sp = 3.14
                 self.yaw_sp = self.current_yaw_vicon - \
                     (self.vicon_yaw_sp + self.traj_yaw_sp)
 
