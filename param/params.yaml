@@ -1,3 +1,8 @@
+ball_cutoff_line_x: -1.6
+car_cutoff_line_x: -1.6
+
+z_sp_update: 0.5 
+
 att_r: 0
 att_p: 0
 att_y: 0
@@ -35,7 +40,7 @@ hover_thrust: 0.9
 min_thrust: 0.6
 max_thrust: 1
 
-x_sp: 0
+x_sp: 0.5
 y_sp: 0
 
 attitude_threshold: 0.6

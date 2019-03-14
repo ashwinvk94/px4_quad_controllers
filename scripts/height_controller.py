@@ -59,7 +59,7 @@ class test:
 
         state_sub = rospy.Subscriber(
             "/mavros/state", State, self.state_subscriber_callback)
-        rospy.Subscriber("/evdodge/positionSetpoint", Odometry, self.positionSetpoint_callback)
+        rospy.Subscriber("/evdodge/positionSetpoint", PoseStamped, self.positionSetpoint_callback)
         while not rospy.is_shutdown():
 
             if(self.vicon_cb_flag and self.state_cb_flag):
@@ -79,8 +79,12 @@ class test:
                         '/attitude_thrust_publisher/height_sp')
                 else:
                     self.height_sp = self.pos_sp_z
-
-                self.height_pid.SetPoint = self.height_sp + self.pos_update_z 
+                # rospy.loginfo(self.update_pos_sp_flag)
+                if self.update_pos_sp_flag:
+                    self.height_pid.SetPoint = self.height_sp + self.pos_update_z
+                    rospy.loginfo('height sp'+ str(self.height_pid.SetPoint))
+                else:
+                    self.height_pid.SetPoint = self.height_sp
 
                 self.height_pid.update(self.vicon_height)
                 # For this to work, we have to align x,y of quad and vicon
@@ -159,11 +163,11 @@ class test:
 
     def positionSetpoint_callback(self,state):
         pos_update_temp_z = state.pose.position.z
-
-        if pos_update_temp_z<1.0:
+        # rospy.loginfo(pos_update_temp_z)
+        if pos_update_temp_z<1.5:
             self.pos_update_z = pos_update_temp_z
 
-        self.update_pos_sp_flag = True
+            self.update_pos_sp_flag = True
 
 def main(args):
     rospy.init_node('offb_node', anonymous=True)

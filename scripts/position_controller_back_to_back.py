@@ -10,6 +10,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Twist
 import tf.transformations
+import time
 
 class test:
 	""" params to add
@@ -26,6 +27,8 @@ class test:
 	def __init__(self):
 		self.vicon_cb_flag = False
 		self.state_cb_flag = False
+		self.update_pos_ball_sp_flag = False
+		self.update_pos_car_sp_flag = False
 
 
 		self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
@@ -48,20 +51,24 @@ class test:
 		self.vicon_dx_pid = PID.PID(self.dx_P, self.dx_I, self.dx_D)
 		self.vicon_dy_pid = PID.PID(self.dy_P, self.dy_I, self.dy_D)
 
+		self.x_sp = rospy.get_param('/attitude_thrust_publisher/x_sp')
+		self.y_sp = rospy.get_param('/attitude_thrust_publisher/y_sp')
+
 		# Rate of looping
-		self.rate = rospy.Rate(20.0)
+		self.rate = rospy.Rate(200.0)
 		# Information
 		# Publisher for updating attitude for the speed
 		# vicon_sum for current speed data
 		self.attitude_target_speed_pub = rospy.Publisher("/px4_quad_controllers/rpy_setpoint", PoseStamped, queue_size=10)
 		vicon_sub = rospy.Subscriber("/intel_aero_quad/odom", Odometry, self.vicon_subscriber_callback)
-		rospy.Subscriber("/evdodge/positionSetpoint", PoseStamped, self.positionSetpoint_callback)
+		rospy.Subscriber("/evdodge/evball/positionSetpoint", PoseStamped, self.ballPositionSetpoint_callback)
+		rospy.Subscriber("/evdodge/evcar/positionSetpoint", PoseStamped, self.carPositionSetpoint_callback)
 		while not rospy.is_shutdown():
 			if (self.vicon_cb_flag): #If connected and data read in
+				# start_time = time.time()
 				# Update params if it was changed
 				# SetPoint Data
-				self.x_sp = rospy.get_param('/attitude_thrust_publisher/x_sp')
-				self.y_sp = rospy.get_param('/attitude_thrust_publisher/y_sp')
+				
 
 				# PID Data
 				self.dx_P = rospy.get_param('/attitude_thrust_publisher/position_controller_x_P')
@@ -74,6 +81,7 @@ class test:
 				# Update the PID with the speed data from vicon
 				self.vicon_dx_pid.update(self.vicon_dx)
 				self.vicon_dy_pid.update(self.vicon_dy)
+				# print("--- %s seconds ---" % (time.time() - start_time))
 				# Change the PID coefficients if they changed
 				self.vicon_dx_pid.setKp(self.dx_P)
 				self.vicon_dx_pid.setKi(self.dx_I)
@@ -83,11 +91,18 @@ class test:
 				self.vicon_dy_pid.setKd(self.dy_D)
 
 				# rospy.loginfo(self.update_pos_sp_flag)
-				if self.update_pos_sp_flag:
+				if self.update_pos_car_sp_flag:
+					self.vicon_dy_pid.SetPoint = self.new_sp + self.pos_update_y
+				elif self.update_pos_ball_sp_flag:
 					self.vicon_dy_pid.SetPoint = self.y_sp + self.pos_update_y
-					rospy.loginfo('y sp'+str(self.vicon_dy_pid.SetPoint))
+					self.new_sp = self.y_sp + self.pos_update_y
 				else:
 					self.vicon_dy_pid.SetPoint = self.y_sp
+				print 'car'
+				print self.update_pos_car_sp_flag
+				print 'ball'
+				print self.update_pos_ball_sp_flag
+				rospy.loginfo('y sp'+str(self.vicon_dy_pid.SetPoint))
 				self.vicon_dx_pid.SetPoint = self.x_sp
 
 				vicon_y_output = self.vicon_dy_pid.output
@@ -99,7 +114,6 @@ class test:
 				target_attitude_speed.pose.position.x = vicon_y_output
 				target_attitude_speed.pose.position.y = vicon_x_output
 				self.attitude_target_speed_pub.publish(target_attitude_speed)
-
 			self.rate.sleep()
 
 	def vicon_subscriber_callback(self,state):
@@ -109,13 +123,21 @@ class test:
 
 		self.vicon_cb_flag = True
 
-	def positionSetpoint_callback(self,state):
+	def ballPositionSetpoint_callback(self,state):
 		pos_update_temp_y = state.pose.position.y
 		# rospy.loginfo(pos_update_temp_y)
 
-		if pos_update_temp_y<1.5:
+		if pos_update_temp_y<1.5 and not self.update_pos_ball_sp_flag:
 			self.pos_update_y = pos_update_temp_y
-			self.update_pos_sp_flag = True
+			self.update_pos_ball_sp_flag = True
+
+	def carPositionSetpoint_callback(self,state):
+		pos_update_temp_y = state.pose.position.y
+		# rospy.loginfo(pos_update_temp_y)
+
+		if pos_update_temp_y<1.5 and not self.update_pos_car_sp_flag:
+			self.pos_update_y = pos_update_temp_y
+			self.update_pos_car_sp_flag = True
 
 def main(args):
 	rospy.init_node('offb_node', anonymous=True)

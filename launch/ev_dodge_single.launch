@@ -1,0 +1,10 @@
+<launch>
+	<node pkg="px4_quad_controllers" name="attitude_thrust_publisher" type="attitude_thrust_publisher.py" output="screen">
+	<rosparam file="$(find px4_quad_controllers)/param/params.yaml" />
+	</node>
+
+	<node pkg="px4_quad_controllers" name="height_controller" type="height_controller.py" output="screen"/>
+	<node pkg="px4_quad_controllers" name="yaw_sp_publisher_manual" type="yaw_sp_publisher_manual.py" output="screen"/>
+	<node pkg="px4_quad_controllers" name="position_controller" type="position_controller.py" output="screen"/>
+	<node pkg="px4_quad_controllers" name="setpoint_publisher" type="setpoint_publisher.py" output="screen"/>
+</launch>
