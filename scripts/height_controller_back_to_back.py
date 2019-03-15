@@ -32,7 +32,8 @@ class test:
 
 		self.state_pid_reset_flag = False
 		self.pid_reset_flag = False
-
+		self.update_pos_ball_sp_flag = False
+		self.update_pos_car_sp_flag = False
 		self.pos_sp_cb_flag = False
 
 		self.update_pos_sp_flag = False
@@ -42,7 +43,10 @@ class test:
 		self.D = rospy.get_param('/attitude_thrust_publisher/height_hover_D')
 
 		self.height_pid = PID.PID(self.P, self.I, self.D)
-		self.timer_flag = True
+		self.car_timer_flag = True
+		self.ball_timer_flag = True
+
+		self.time_threshold = rospy.get_param('/attitude_thrust_publisher/timer_threshold')
 
 		self.time_threshold = rospy.get_param('/attitude_thrust_publisher/timer_threshold')
 
@@ -63,7 +67,8 @@ class test:
 
 		state_sub = rospy.Subscriber(
 			"/mavros/state", State, self.state_subscriber_callback)
-		rospy.Subscriber("/evdodge/positionSetpoint", PoseStamped, self.positionSetpoint_callback)
+		rospy.Subscriber("/evdodge/evball/positionSetpoint", PoseStamped, self.ballPositionSetpoint_callback)
+		rospy.Subscriber("/evdodge/evcar/positionSetpoint", PoseStamped, self.carPositionSetpoint_callback)
 		while not rospy.is_shutdown():
 
 			if(self.vicon_cb_flag and self.state_cb_flag):
@@ -84,23 +89,35 @@ class test:
 				else:
 					self.height_sp = self.pos_sp_z
 				# rospy.loginfo(self.update_pos_sp_flag)
-				if self.update_pos_sp_flag:
-					if self.pos_update_z!=0:
-						print 'crossed'
-						if self.timer_flag:
-							start_time = time.time()
-							self.timer_flag = False
-						timer_count = time.time() - start_time
-						if timer_count<self.time_threshold:
-							self.height_pid.SetPoint = self.height_sp + self.pos_update_z
-						else:
-							self.height_pid.SetPoint = self.height_sp
+
+				if self.update_pos_car_sp_flag:
+					if self.car_timer_flag:
+						self.current_z = self.vicon_height
+						car_start_time = time.time()
+						self.car_timer_flag = False
+					car_timer_count = time.time() - car_start_time
+
+					if car_timer_count<self.time_threshold:
+						self.height_pid.SetPoint = self.current_z + self.pos_update_z
 					else:
 						self.height_pid.SetPoint = self.height_sp
-					rospy.loginfo('height sp'+ str(self.height_pid.SetPoint))
+				elif self.update_pos_ball_sp_flag:
+					if self.ball_timer_flag:
+						ball_start_time = time.time()
+						self.ball_timer_flag = False
+					ball_timer_count = time.time() - ball_start_time
+
+					if ball_timer_count<self.time_threshold:
+						self.height_pid.SetPoint = self.height_sp + self.pos_update_z
+					else:
+						self.height_pid.SetPoint = self.height_sp
 				else:
 					self.height_pid.SetPoint = self.height_sp
-
+				print 'car'
+				print self.update_pos_car_sp_flag
+				print 'ball'
+				print self.update_pos_ball_sp_flag
+				rospy.loginfo('height sp'+ str(self.height_pid.SetPoint))
 				self.height_pid.update(self.vicon_height)
 				# For this to work, we have to align x,y of quad and vicon
 
@@ -159,6 +176,22 @@ class test:
 	def vicon_sub_callback(self, state):
 		self.vicon_height = state.pose.pose.position.z
 		self.vicon_cb_flag = True
+
+	def ballPositionSetpoint_callback(self,state):
+		pos_update_temp_z = state.pose.position.z
+		# rospz.loginfo(pos_update_temp_z)
+
+		if pos_update_temp_z<1.5 and not self.update_pos_ball_sp_flag:
+			self.pos_update_z = pos_update_temp_z
+			self.update_pos_ball_sp_flag = True
+
+	def carPositionSetpoint_callback(self,state):
+		pos_update_temp_z = state.pose.position.z
+		# rospz.loginfo(pos_update_temp_z)
+
+		if pos_update_temp_z<1.5 and not self.update_pos_car_sp_flag:
+			self.pos_update_z = pos_update_temp_z
+			self.update_pos_car_sp_flag = True
 
 	# Current state subscriber
 

@@ -30,6 +30,11 @@ class test:
 		self.update_pos_ball_sp_flag = False
 		self.update_pos_car_sp_flag = False
 
+		self.car_timer_flag = True
+		self.ball_timer_flag = True
+
+		self.time_threshold = rospy.get_param('/attitude_thrust_publisher/timer_threshold')
+
 
 		self.vicon_yaw_sp = rospy.get_param('/attitude_thrust_publisher/vicon_yaw_sp')
 
@@ -92,17 +97,34 @@ class test:
 
 				# rospy.loginfo(self.update_pos_sp_flag)
 				if self.update_pos_car_sp_flag:
-					self.vicon_dy_pid.SetPoint = self.new_sp + self.pos_update_y
+					if self.car_timer_flag:
+						self.current_y = self.vicon_dy
+						car_start_time = time.time()
+						self.car_timer_flag = False
+					car_timer_count = time.time() - car_start_time
+
+					if car_timer_count<self.time_threshold:
+						self.vicon_dy_pid.SetPoint = self.current_y + self.pos_update_y
+					else:
+						self.vicon_dy_pid.SetPoint = self.y_sp
 				elif self.update_pos_ball_sp_flag:
-					self.vicon_dy_pid.SetPoint = self.y_sp + self.pos_update_y
-					self.new_sp = self.y_sp + self.pos_update_y
+					if self.ball_timer_flag:
+						ball_start_time = time.time()
+						self.ball_timer_flag = False
+					ball_timer_count = time.time() - ball_start_time
+
+					if ball_timer_count<self.time_threshold:
+						self.vicon_dy_pid.SetPoint = self.y_sp + self.pos_update_y
+					else:
+						self.vicon_dy_pid.SetPoint = self.y_sp
 				else:
 					self.vicon_dy_pid.SetPoint = self.y_sp
-				print 'car'
-				print self.update_pos_car_sp_flag
-				print 'ball'
-				print self.update_pos_ball_sp_flag
-				rospy.loginfo('y sp'+str(self.vicon_dy_pid.SetPoint))
+
+				# print 'car'
+				# print self.update_pos_car_sp_flag
+				# print 'ball'
+				# print self.update_pos_ball_sp_flag
+				# rospy.loginfo('y sp'+str(self.vicon_dy_pid.SetPoint))
 				self.vicon_dx_pid.SetPoint = self.x_sp
 
 				vicon_y_output = self.vicon_dy_pid.output

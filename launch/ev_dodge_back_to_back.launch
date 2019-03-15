@@ -3,7 +3,7 @@
 	<rosparam file="$(find px4_quad_controllers)/param/params.yaml" />
 	</node>
 
-	<node pkg="px4_quad_controllers" name="height_controller" type="height_controller.py" output="screen"/>
+	<node pkg="px4_quad_controllers" name="height_controller_back_to_back" type="height_controller_back_to_back.py" output="screen"/>
 	<node pkg="px4_quad_controllers" name="yaw_sp_publisher_manual" type="yaw_sp_publisher_manual.py" output="screen"/>
 	<node pkg="px4_quad_controllers" name="position_controller_back_to_back" type="position_controller_back_to_back.py" output="screen"/>
 	<node pkg="px4_quad_controllers" name="setpoint_publisher_back_to_back" type="setpoint_publisher_back_to_back.py" output="screen"/>

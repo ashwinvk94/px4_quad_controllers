@@ -51,8 +51,8 @@ class positionSetpointPub:
 		target_attitude_speed.header.stamp = rospy.Time.now()
 
 		target_attitude_speed.pose.position.x = self.move_position[0]
-		target_attitude_speed.pose.position.y = self.move_position[1]*2
-		target_attitude_speed.pose.position.z = self.move_position[2]*2
+		target_attitude_speed.pose.position.y = self.move_position[1]*0.5
+		target_attitude_speed.pose.position.z = self.move_position[2]*0.5
 
 		self.target_position_pub.publish(target_attitude_speed)
 

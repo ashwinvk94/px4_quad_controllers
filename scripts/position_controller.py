@@ -10,6 +10,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Twist
 import tf.transformations
+import time
 
 class test:
 	""" params to add
@@ -33,6 +34,10 @@ class test:
 		self.pos_sp_cb_flag = False
 
 		self.update_pos_sp_flag = False
+
+		self.timer_flag = True
+
+		self.time_threshold = rospy.get_param('/attitude_thrust_publisher/timer_threshold')
 
 		# get the info for the PID and for the set point
 		# PID Data
@@ -84,7 +89,18 @@ class test:
 
 				# rospy.loginfo(self.update_pos_sp_flag)
 				if self.update_pos_sp_flag:
-					self.vicon_dy_pid.SetPoint = self.y_sp + self.pos_update_y
+					if self.pos_update_y!=0:
+						if self.timer_flag:
+							start_time = time.time()
+							self.timer_flag = False
+						timer_count = time.time() - start_time
+						#print timer_count
+						if timer_count<self.time_threshold:
+							self.vicon_dy_pid.SetPoint = self.y_sp + self.pos_update_y
+						else:
+							self.vicon_dy_pid.SetPoint = self.y_sp
+					else:
+						self.vicon_dy_pid.SetPoint = self.y_sp
 					rospy.loginfo('y sp'+str(self.vicon_dy_pid.SetPoint))
 				else:
 					self.vicon_dy_pid.SetPoint = self.y_sp

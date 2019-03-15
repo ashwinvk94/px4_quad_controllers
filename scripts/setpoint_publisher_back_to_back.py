@@ -69,7 +69,7 @@ class positionSetpointPub:
 			self.ball_dy = ball_dy/norm
 			self.ball_dz = ball_dz/norm
 			if self.ball_dy>0:
-				self.perpend_vector = [0,-self.ball_dz,self.ball_dy]
+				self.perpend_vector = [0,-self.ball_dz,self.z_sp_update]
 			else:
 				self.perpend_vector = [0,self.ball_dz,self.z_sp_update]
 			self.move_position = self.mag*self.perpend_vector
